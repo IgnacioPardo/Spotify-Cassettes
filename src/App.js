@@ -372,6 +372,9 @@ function App() {
       />
 
       <audio id="musicPlayer" src={currentSong} controls autoPlay style={{display: "none"}}
+        onEnded={() => {
+          setControlAction("stop")
+        }}
         preload="auto"
       />
     </div>

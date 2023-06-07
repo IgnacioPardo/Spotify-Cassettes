@@ -89,7 +89,9 @@ const Cassette = (props) => {
                     <span>
                       {props.title}
                       <br />
-                      {props.artist} - {props.album}
+                      <span className="song_artist_album">
+                        {props.artist} {props.album ? "-" : ""} {props.album}
+                      </span>
                     </span>
 
                     <br />
