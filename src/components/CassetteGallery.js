@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import tdkLogo  from './icons/tdk.svg'
 
 const Cassette = (props) => {
 
   const [isPlaying, setIsPlaying] = useState(false)
   const [hover, setHover] = useState(false)
 
-  var shift = props.id - 1;
+  var reel_speed = 1;
+  var shift = props.id - 1 + props.shift;
 
   useEffect(() => {
     if (isPlaying) {
@@ -14,32 +16,45 @@ const Cassette = (props) => {
         if (props.currentItemId === props.id) {
             props.setCurrentItemId(null)
         }
+        else if (props.currentItemId != null) {
+            props.setCurrentItemId(props.currentItemId)
+        }
     }
-  }, [isPlaying])
+  }, [isPlaying, props])
 
   useEffect(() => {
     if (props.currentItemId === props.id) {
         setIsPlaying(true)
-    } else {
+    }
+    else {
         setIsPlaying(false)
     }
-    }, [props.currentItemId])
+  }, [props.currentItemId, props])
 
   useEffect(() => {
     if (hover) {
       document.body.style.backgroundColor = props.bg_color;
     }
-  }, [hover])
+  }, [hover, props])
 
   return (
     <>
       <div 
-          className="cassette" 
-          style={{ transform: `translate3d(${(shift * -100)}px, ${(shift*10)}px, 0)` }}
+          className={["cassette", isPlaying ? "playing" : ""].join(" ")}
+          style={{ 
+            transform: `translate3d(${(shift * -100)}px, ${(shift*10)}px, 0)`,
+            transition: "transform 0.2s ease-in-out"
+        }}
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
-          onClick={() => setIsPlaying(!isPlaying)}
-          id={props.id}
+          onClick={() => {
+            setIsPlaying(!isPlaying)
+
+            if (!props.isFullscreen){
+              props.setFullscreen(true);
+            }
+          }}
+          id={"Cassette_" + props.id}
       >
         <div className="shadow-scene">
           <div 
@@ -62,7 +77,7 @@ const Cassette = (props) => {
           className="cassette-scene"
           style={{ transform: 
             isPlaying ?
-            `perspective(10000px) rotateX(85deg) rotateZ(390deg) translateZ(20vw) rotateY(0deg)` :
+            `perspective(10000px) rotateX(85deg) rotateZ(390deg) translateZ(24vw) rotateY(0deg) scale3d(1.4, 1.4, 1.4)` :
             `perspective(10000px) rotateX(80deg) rotateZ(40deg) translateZ(${(hover ?  4: 0)}vw)` 
         }}
         >
@@ -70,11 +85,26 @@ const Cassette = (props) => {
             <div className="case-scene">
               <div className="ft face">
                 <div className="full-mask">
-                  <span>
-                    {props.title}
+                  <div className="cassette_face_info">
+                    <span>
+                      {props.title}
+                      <br />
+                      {props.artist} - {props.album}
+                    </span>
+
                     <br />
-                    {props.artist} - {props.album}
-                  </span>
+                    <br />
+
+                    {/* <tdkLogo /> */}
+                    <img src={tdkLogo} alt="TDK Logo" width="60" height="60" 
+                        style={{
+                          margin: "0 auto",
+                          position: "relative",
+                          bottom: "-6px",
+                          left: "0px"
+                        }} 
+                    />
+                  </div>
                 </div>
               </div>
               <div className="bk face"></div>
@@ -87,7 +117,7 @@ const Cassette = (props) => {
             <div className="reel-scene" id="reel-scene1">
               <div className="reel-shape cylinder-2 cyl-2"
                 style={{ 
-                    animation: (isPlaying || hover) ? "spin 1s linear infinite" : "unset",
+                    animation: (isPlaying || hover) ? `spin ${reel_speed}s linear infinite` : "unset",
                     backgroundColor: props.bg_color
                 }}
               >
@@ -124,7 +154,7 @@ const Cassette = (props) => {
             <div className="reel-scene" id="reel-scene2">
               <div className="reel-shape cylinder-2 cyl-2"
                 style={{
-                    animation: (isPlaying || hover) ? "spin 1s linear infinite" : "unset",
+                    animation: (isPlaying || hover) ? `spin ${reel_speed}s linear infinite` : "unset",
                     backgroundColor: props.bg_color
                 }}
               >
@@ -299,33 +329,17 @@ const Cassette = (props) => {
   );
 }
 
-
-const Player = (props) => {
-    return (
-        <>
-            <div className="player">
-                <div className="player__image">
-                    <img src={props.image} alt="album cover" />
-                </div>
-                <div className="player__info">
-                    <div className="player__info__title">
-                        {props.title}
-                    </div>
-                    <div className="player__info__artist">
-                        {props.artist}
-                    </div>
-                </div>
-                <div className="player__controls">
-                </div>
-            </div>
-        </>
-    );
-}
-
 const CassetteGallery = (props) => {
   return (
     <>
-    <div className="cassette-gallery" id="cassette-gallery" style={props.style}>
+    <div 
+      className="cassette-gallery" 
+      id="cassette-gallery" 
+      style={
+        props.style
+      }
+      onWheel={props.handleScroll}
+    >
       {
         props.songs.map((song, index) => {
           return <Cassette 
@@ -338,7 +352,11 @@ const CassetteGallery = (props) => {
                     setCurrentItemId={props.setCurrentItemId}
                     currentItemId={props.currentItemId}
                     songUrl={song.url}
+                    shift={props.shift}
+                    isFullscreen={props.isFullscreen}
+                    setFullscreen={props.setFullscreen}
                 />
+                
         })
       }
     </div>

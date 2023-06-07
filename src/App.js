@@ -28,12 +28,42 @@ const PlayerIcon = ({name}) => {
   )
 }
 
+const PlayerControls = ({setControlAction}) =>{
+  return (<>
+    <div className="player_controls">
+      <button className="player_btn" id="btn_rewind" onClick={() => {
+        setControlAction("rewind")
+      }}>
+        <PlayerIcon name="rewind" />
+      </button>
+
+      <button className="player_btn" id="btn_play_pause" onClick={() => {
+        setControlAction("play_pause")
+      }}>
+        <PlayerIcon name="play_pause" />
+      </button>
+
+      <button className="player_btn" id="btn_stop" onClick={() => {
+        setControlAction("stop")
+
+      }}>
+        <PlayerIcon name="stop" />
+      </button>
+
+      <button className="player_btn" id="btn_forward" onClick={() => {
+        setControlAction("forward")
+      }}>
+        <PlayerIcon name="forward" />
+      </button>
+    </div>
+  </>)
+}
+
 let songs = [
   {
     name: "Nos Siguen Pegando Abajo",
     album: "Clics modernos",
     artist: "Charly García",
-    id: 0,
     bg_color: "#4cb8f5",
     url: "/audios/Nos Siguen Pegando Abajo.mp3",
   },
@@ -41,7 +71,6 @@ let songs = [
     name: "Promesas Sobre El Bidet",
     album: "Piano Bar",
     artist: "Charly García",
-    id: 1,
     bg_color: "#a6e630",
     url: "/audios/Promesas Sobre El Bidet.mp3",
   },
@@ -49,7 +78,6 @@ let songs = [
     name: "Hablando a Tu Corazón",
     album: "Tango",
     artist: "Charly García",
-    id: 2,
     bg_color: "#f5e82f",
     url: "/audios/Hablando a Tu Corazon.mp3",
   },
@@ -57,12 +85,35 @@ let songs = [
     name: "No Voy en Tren",
     album: "Parte de la religión",
     artist: "Charly García",
-    id: 3,
     bg_color: "#E75776",
     url: "/audios/No Voy en Tren.mp3",
   },
+  {
+    name: "La Grasa de las Capitales",
+    album: "La Grasa de las Capitales",
+    artist: "Serú Girán",
+    bg_color: "#E75776",
+    url: "/audios/La Grasa de las Capitales.mp3",
+  }
 ]
 
+// fill with 10 empty songs
+
+for (let i = 0; i < 5; i++){
+  songs.push({
+    name: "",
+    album: "",
+    artist: "",
+    bg_color: "#E75776",
+    url: "",
+  })
+}
+
+// fill with auto numerated ids 
+
+for (let i = 0; i < songs.length; i++){
+  songs[i].id = i
+}
 
 function formatTime(time){
   // Format time to mm:ss
@@ -88,6 +139,27 @@ function App() {
   const [currentSongDuration, setCurrentSongDuration] = useState(0)
 
   const [controlAction, setControlAction] = useState("play_pause")
+  const [scrollShift, setScrollShift] = useState(-8)
+
+  const [isFullscreen, setFullscreen] = useState(false)
+
+  useEffect(() => {
+    // Set fullscreen
+    let app = document.body;
+    if (isFullscreen){
+      //app.requestFullscreen()
+    }
+    else{
+      //document.exitFullscreen()
+    }
+  }, [isFullscreen])
+
+  const handleScroll = event => {
+    // Handle scroll event
+
+    var song_count = songs.length;  
+    setScrollShift(scrollShift + event.deltaY*0.1)
+  };
 
   function playSound(sound) {
     let sounds = {
@@ -102,44 +174,41 @@ function App() {
 
     if (playPromise !== undefined) {
       playPromise.then(_ => {
-        setMiscAudio(audio)
       }).catch(error => {});
     }
   }
-
-  const [miscAudio, setMiscAudio] = useState(null)
 
   useEffect(() => {
     let audio = document.querySelector("#musicPlayer")
     let playPromise;
     if (controlAction === "play_pause"){
       setControlAction("")
-      playPromise = audio.play()
+      if (audio.paused){
+        playPromise = audio.play()
+      }
+      else{
+        playPromise = audio.pause()
+      }
+      playSound("click")
+
     }
     else if (controlAction === "stop"){
-      playPromise = audio.pause()
-      audio.currentTime = 0
-
-      let pauseMiscPromise = miscAudio.pause();
-      if (pauseMiscPromise !== undefined){
-        pauseMiscPromise.then(_ => {
-        }
-        )
-        .catch(error => {
-          console.log(error)
-        }
-        );  
+      setControlAction("play_pause")
+      setControlAction("play_pause")
+      var playingCassette = document.querySelector(".cassette.playing")
+      console.log(playingCassette)
+      if (playingCassette){
+        playingCassette.click()
       }
-
     }
     else if (controlAction === "rewind"){
-      playPromise = audio.pause()
+      var pausePromise = audio.pause()
 
       playSound("rewind")
 
       // Decrement current time by 1 second every 100ms
-
-      var interval = setInterval(() => {
+      
+      let interval = setInterval(() => {
         audio.currentTime -= 1;
         setCurrentSongTime(audio.currentTime);
       }, 100);
@@ -148,18 +217,27 @@ function App() {
         clearInterval(interval);
         setCurrentSongTime(audio.currentTime);
 
-        playPromise = audio.play();
+        if (pausePromise !== undefined) {
+          pausePromise.then(_ => {
+            if (audio.paused) {
+              playPromise = audio.play();
+            }
+          }).catch(error => {
+            console.log(error)
+          });
+        }
+
         setControlAction("play_pause")
       }, 3000);
 
     }
     else if (controlAction === "forward"){
-      playPromise = audio.pause()
+      let pausePromise = audio.pause();
 
-      playSound("forward")
+      playSound("forward");
       
       // Increment current time by 1 second every 100ms
-      var interval = setInterval(() => {
+      let interval = setInterval(() => {
         audio.currentTime += 1;
         setCurrentSongTime(audio.currentTime);
       }, 100);
@@ -168,8 +246,18 @@ function App() {
         clearInterval(interval);
         setCurrentSongTime(audio.currentTime);
 
-        setControlAction("play_pause")
-        playPromise = audio.play();
+        setControlAction("play_pause");
+
+        if (pausePromise !== undefined){
+          pausePromise.then(_ => {
+            if (audio.paused){
+              playPromise = audio.play();
+            }
+          }).catch(error => {
+            console.log(error)
+          });
+        }
+
       }, 4000);
     }
 
@@ -194,12 +282,12 @@ function App() {
         setCurrentSongDuration(audio.duration)
       })
 
-      playSound("switch")
+      setScrollShift(-currentItemId - 5)
     }
     else {
       setCurrentSong("")
-      playSound("switch")
     }
+    playSound("switch")
   }, [currentItemId])
 
   useEffect(() => {
@@ -221,9 +309,10 @@ function App() {
   }, [currentSongDuration, currentSongTime])
 
   return (
-    <div id="App">
+    <div id="App" onWheel={handleScroll}>
 
       <div className="info" id="info_panel">
+        
         <h1>Spotify Cassettes</h1>
         <br></br>
         <div className="song_info"
@@ -246,7 +335,18 @@ function App() {
             {formatTime(currentSongTime)} / {formatTime(currentSongDuration)}
           </div>
           
-          <div className="player_time_bar">
+          <div className="player_time_bar" 
+          
+            onClick={e => {
+              let audio = document.querySelector("#musicPlayer")
+              let rect = e.target.getBoundingClientRect()
+              let x = e.clientX - rect.left
+              let width = rect.right - rect.left
+              let percent = x / width
+              audio.currentTime = percent * audio.duration
+              setCurrentSongTime(audio.currentTime)
+            }}    
+          >
             <div 
               className="player_time_bar_progress"
               style={{width: `${currentSongTime / currentSongDuration * 100}%`}}
@@ -254,51 +354,7 @@ function App() {
             </div>
           </div>
           <br></br>
-          <div className="player_controls">
-            <button className="player_btn" id="btn_rewind" onClick={() => {
-              
-              setControlAction("rewind")
-
-            }}>
-              <PlayerIcon name="rewind" />
-            </button>
-
-            <button className="player_btn" id="btn_play_pause" onClick={() => {
-              let audio = document.querySelector("#musicPlayer");
-              if (audio.paused){
-                audio.play();
-              }
-              else {
-                audio.pause();
-              }
-
-              playSound("click");
-            }}>
-              <PlayerIcon name="play_pause" />
-            </button>
-
-            <button className="player_btn" id="btn_stop" onClick={() => {
-              let audio = document.querySelector("#musicPlayer")
-              if (!audio.paused){
-                audio.pause();
-              }
-
-              audio.currentTime = 0;
-
-              playSound("click");
-
-              setCurrentItemId(null);
-              
-            }}>
-              <PlayerIcon name="stop" />
-            </button>
-
-            <button className="player_btn" id="btn_forward" onClick={() => {
-              setControlAction("forward")
-            }}>
-              <PlayerIcon name="forward" />
-            </button>
-          </div>
+          <PlayerControls setControlAction={setControlAction} />
         </div>
       </div>
       
@@ -306,14 +362,16 @@ function App() {
         songs={songs} 
         setCurrentItemId={setCurrentItemId} 
         currentItemId={currentItemId}
-        style={{transform: "translateY(150px)"}}
+        style={{
+          transform: currentItemId !== null ? "translateY(400px)" : "translateY(300px)",
+          transition: "transform 0.5s ease-in-out"
+        }}
+        shift={scrollShift}
+        isFullscreen={isFullscreen}
+        setFullscreen={setFullscreen}
       />
 
       <audio id="musicPlayer" src={currentSong} controls autoPlay style={{display: "none"}}
-        onEnded={() => {
-          let nextSong = songs.find(song => song.url !== currentSong)
-          setCurrentItemId(nextSong.id)
-        }}
         preload="auto"
       />
     </div>
