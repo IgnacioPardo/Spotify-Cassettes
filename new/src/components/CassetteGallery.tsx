@@ -4,6 +4,175 @@ import React, { useState, useEffect } from 'react';
 
 const tdkLogoURL = '/tdk-logo.svg';
 
+const Cover = () => {
+    return (
+        <div className="cover-scene">
+            <div className="cover-shape prism-1 pri-1">
+                <div className="cover-face ft" />
+                <div className="cover-face bk" />
+                <div className="cover-face-wrapper rt">
+                    <div className="cover-face" />
+                </div>
+                <div className="cover-face-wrapper lt">
+                    <div className="cover-face" />
+                </div>
+                <div className="cover-face bm" />
+            </div>
+            <div className="cover-shape cuboid-1 cub-1">
+                <div className="cover-face ft" />
+                <div className="cover-face bk" />
+                <div className="cover-face rt" />
+                <div className="cover-face lt" />
+                <div className="cover-face bm" />
+                <div className="cover-face tp" />
+            </div>
+            <div className="cover-shape prism-2 pri-2">
+                <div className="cover-face ft" />
+                <div className="cover-face bk" />
+                <div className="cover-face-wrapper rt">
+                    <div className="cover-face" />
+                </div>
+                <div className="cover-face-wrapper lt">
+                    <div className="cover-face" />
+                </div>
+                <div className="cover-face bm" />
+            </div>
+        </div>
+    );
+};
+
+const Reel = ({
+    isPlaying,
+    hover,
+    reel_speed,
+    song,
+    id,
+}: {
+    isPlaying: boolean;
+    hover: boolean;
+    reel_speed: number;
+    song: Song;
+    id: number;
+}) => {
+    return (
+        <div className="reel-scene" id={`reel-scene${id}`}>
+            <div
+                className="reel-shape cylinder-2 cyl-2"
+                style={{
+                    animation:
+                        isPlaying || hover
+                            ? `spin ${reel_speed}s linear infinite`
+                            : 'unset',
+                    backgroundColor: song.bg_color,
+                }}
+            >
+                <div className="reel-face bm">
+                    <div className="reel-circle">
+                        <div className="reel-teeth tooth0" />
+                        <div className="reel-teeth tooth1" />
+                        <div className="reel-teeth tooth2" />
+                    </div>
+                </div>
+                <div className="reel-face tp" />
+                <div className="reel-face side s0" />
+                <div className="reel-face side s1" />
+                <div className="reel-face side s2" />
+                <div className="reel-face side s3" />
+                <div className="reel-face side s4" />
+                <div className="reel-face side s5" />
+                <div className="reel-face side s6" />
+                <div className="reel-face side s7" />
+                <div className="reel-face side s8" />
+                <div className="reel-face side s9" />
+                <div className="reel-face side s10" />
+                <div className="reel-face side s11" />
+                <div className="reel-face side s12" />
+                <div className="reel-face side s13" />
+                <div className="reel-face side s14" />
+                <div className="reel-face side s15" />
+                <div className="reel-face side s16" />
+                <div className="reel-face side s17" />
+                <div className="reel-face side s18" />
+                <div className="reel-face side s19" />
+            </div>
+        </div>
+    );
+};
+
+const Screw = ({ id }: { id: number }) => {
+    return (
+        <div className="screw-scene" id={`screw-scene${id}`}>
+            <div className="screw-shape cylinder-1 cyl-1">
+                <div className="screw-face bm" />
+                <div className="screw-face tp" />
+                <div className="screw-face side s0" />
+                <div className="screw-face side s1" />
+                <div className="screw-face side s2" />
+                <div className="screw-face side s3" />
+                <div className="screw-face side s4" />
+                <div className="screw-face side s5" />
+                <div className="screw-face side s6" />
+                <div className="screw-face side s7" />
+                <div className="screw-face side s8" />
+                <div className="screw-face side s9" />
+                <div className="screw-face side s10" />
+                <div className="screw-face side s11" />
+                <div className="screw-face side s12" />
+                <div className="screw-face side s13" />
+            </div>
+        </div>
+    );
+};
+
+const Faces = () => {
+    return (
+        <>
+            <div className="bk face" />
+            <div className="rt face" />
+            <div className="lt face" />
+            <div className="tp face" />
+            <div className="bm face" />
+        </>
+    );
+};
+
+const ShadowFace = ({
+    id,
+    isPlaying,
+    hover,
+}: {
+    id: number;
+    isPlaying: boolean;
+    hover: boolean;
+}) => {
+    return (
+        <div
+            className={`shadow-shape${id}`}
+            style={{
+                boxShadow: isPlaying
+                    ? ''
+                    : `0px 0px ${hover ? 20 : 0}px 10px rgba(0, 0, 0, 1)`,
+                opacity: isPlaying ? 0 : hover ? 0.2 : 0.3,
+            }}
+        />
+    );
+};
+
+const Shadow = ({
+    isPlaying,
+    hover,
+}: {
+    isPlaying: boolean;
+    hover: boolean;
+}) => {
+    return (
+        <div className="shadow-scene">
+            <ShadowFace id={1} isPlaying={isPlaying} hover={hover} />
+            <ShadowFace id={2} isPlaying={isPlaying} hover={hover} />
+        </div>
+    );
+};
+
 const Cassette = ({ song, shift }: { song: Song; shift: number }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [hover, setHover] = useState(false);
@@ -54,31 +223,7 @@ const Cassette = ({ song, shift }: { song: Song; shift: number }) => {
                 }}
                 // id={'Cassette_' + props.id}
             >
-                <div className="shadow-scene">
-                    <div
-                        className="shadow-shape1"
-                        style={{
-                            boxShadow: isPlaying
-                                ? ''
-                                : `0px 0px ${
-                                      hover ? 20 : 0
-                                  }px 10px rgba(0, 0, 0, 1)`,
-                            opacity: isPlaying ? 0 : hover ? 0.2 : 0.3,
-                        }}
-                    ></div>
-                    <div
-                        className="shadow-shape2"
-                        style={{
-                            boxShadow: isPlaying
-                                ? ''
-                                : `0px 0px ${
-                                      hover ? 20 : 0
-                                  }px 10px rgba(0, 0, 0, 1)`,
-                            opacity: isPlaying ? 0 : hover ? 0.2 : 0.3,
-                        }}
-                    ></div>
-                </div>
-
+                <Shadow isPlaying={isPlaying} hover={hover} />
                 <div
                     className="cassette-scene"
                     style={{
@@ -122,229 +267,31 @@ const Cassette = ({ song, shift }: { song: Song; shift: number }) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="bk face"></div>
-                            <div className="rt face"></div>
-                            <div className="lt face"></div>
-                            <div className="tp face"></div>
-                            <div className="bm face"></div>
+                            <Faces />
                         </div>
 
-                        <div className="reel-scene" id="reel-scene1">
-                            <div
-                                className="reel-shape cylinder-2 cyl-2"
-                                style={{
-                                    animation:
-                                        isPlaying || hover
-                                            ? `spin ${reel_speed}s linear infinite`
-                                            : 'unset',
-                                    backgroundColor: song.bg_color,
-                                }}
-                            >
-                                <div className="reel-face bm">
-                                    <div className="reel-circle">
-                                        <div className="reel-teeth tooth0"></div>
-                                        <div className="reel-teeth tooth1"></div>
-                                        <div className="reel-teeth tooth2"></div>
-                                    </div>
-                                </div>
-                                <div className="reel-face tp"></div>
-                                <div className="reel-face side s0"></div>
-                                <div className="reel-face side s1"></div>
-                                <div className="reel-face side s2"></div>
-                                <div className="reel-face side s3"></div>
-                                <div className="reel-face side s4"></div>
-                                <div className="reel-face side s5"></div>
-                                <div className="reel-face side s6"></div>
-                                <div className="reel-face side s7"></div>
-                                <div className="reel-face side s8"></div>
-                                <div className="reel-face side s9"></div>
-                                <div className="reel-face side s10"></div>
-                                <div className="reel-face side s11"></div>
-                                <div className="reel-face side s12"></div>
-                                <div className="reel-face side s13"></div>
-                                <div className="reel-face side s14"></div>
-                                <div className="reel-face side s15"></div>
-                                <div className="reel-face side s16"></div>
-                                <div className="reel-face side s17"></div>
-                                <div className="reel-face side s18"></div>
-                                <div className="reel-face side s19"></div>
-                            </div>
-                        </div>
-                        <div className="reel-scene" id="reel-scene2">
-                            <div
-                                className="reel-shape cylinder-2 cyl-2"
-                                style={{
-                                    animation:
-                                        isPlaying || hover
-                                            ? `spin ${reel_speed}s linear infinite`
-                                            : 'unset',
-                                    backgroundColor: song.bg_color,
-                                }}
-                            >
-                                <div className="reel-face bm">
-                                    <div className="reel-circle">
-                                        <div className="reel-teeth tooth0"></div>
-                                        <div className="reel-teeth tooth1"></div>
-                                        <div className="reel-teeth tooth2"></div>
-                                    </div>
-                                </div>
-                                <div className="reel-face tp"></div>
-                                <div className="reel-face side s0"></div>
-                                <div className="reel-face side s1"></div>
-                                <div className="reel-face side s2"></div>
-                                <div className="reel-face side s3"></div>
-                                <div className="reel-face side s4"></div>
-                                <div className="reel-face side s5"></div>
-                                <div className="reel-face side s6"></div>
-                                <div className="reel-face side s7"></div>
-                                <div className="reel-face side s8"></div>
-                                <div className="reel-face side s9"></div>
-                                <div className="reel-face side s10"></div>
-                                <div className="reel-face side s11"></div>
-                                <div className="reel-face side s12"></div>
-                                <div className="reel-face side s13"></div>
-                                <div className="reel-face side s14"></div>
-                                <div className="reel-face side s15"></div>
-                                <div className="reel-face side s16"></div>
-                                <div className="reel-face side s17"></div>
-                                <div className="reel-face side s18"></div>
-                                <div className="reel-face side s19"></div>
-                            </div>
-                        </div>
+                        <Reel
+                            id={1}
+                            isPlaying={isPlaying}
+                            hover={hover}
+                            song={song}
+                            reel_speed={reel_speed}
+                        />
+                        <Reel
+                            id={2}
+                            isPlaying={isPlaying}
+                            hover={hover}
+                            song={song}
+                            reel_speed={reel_speed}
+                        />
 
-                        <div className="cover-scene">
-                            <div className="cover-shape prism-1 pri-1">
-                                <div className="cover-face ft"></div>
-                                <div className="cover-face bk"></div>
-                                <div className="cover-face-wrapper rt">
-                                    <div className="cover-face"></div>
-                                </div>
-                                <div className="cover-face-wrapper lt">
-                                    <div className="cover-face"></div>
-                                </div>
-                                <div className="cover-face bm"></div>
-                            </div>
-                            <div className="cover-shape cuboid-1 cub-1">
-                                <div className="cover-face ft"></div>
-                                <div className="cover-face bk"></div>
-                                <div className="cover-face rt"></div>
-                                <div className="cover-face lt"></div>
-                                <div className="cover-face bm"></div>
-                                <div className="cover-face tp"></div>
-                            </div>
-                            <div className="cover-shape prism-2 pri-2">
-                                <div className="cover-face ft"></div>
-                                <div className="cover-face bk"></div>
-                                <div className="cover-face-wrapper rt">
-                                    <div className="cover-face"></div>
-                                </div>
-                                <div className="cover-face-wrapper lt">
-                                    <div className="cover-face"></div>
-                                </div>
-                                <div className="cover-face bm"></div>
-                            </div>
-                        </div>
+                        <Cover />
 
-                        <div className="screw-scene" id="screw-scene1">
-                            <div className="screw-shape cylinder-1 cyl-1">
-                                <div className="screw-face bm"></div>
-                                <div className="screw-face tp"></div>
-                                <div className="screw-face side s0"></div>
-                                <div className="screw-face side s1"></div>
-                                <div className="screw-face side s2"></div>
-                                <div className="screw-face side s3"></div>
-                                <div className="screw-face side s4"></div>
-                                <div className="screw-face side s5"></div>
-                                <div className="screw-face side s6"></div>
-                                <div className="screw-face side s7"></div>
-                                <div className="screw-face side s8"></div>
-                                <div className="screw-face side s9"></div>
-                                <div className="screw-face side s10"></div>
-                                <div className="screw-face side s11"></div>
-                                <div className="screw-face side s12"></div>
-                                <div className="screw-face side s13"></div>
-                            </div>
-                        </div>
-                        <div className="screw-scene" id="screw-scene2">
-                            <div className="screw-shape cylinder-1 cyl-1">
-                                <div className="screw-face bm"></div>
-                                <div className="screw-face tp"></div>
-                                <div className="screw-face side s0"></div>
-                                <div className="screw-face side s1"></div>
-                                <div className="screw-face side s2"></div>
-                                <div className="screw-face side s3"></div>
-                                <div className="screw-face side s4"></div>
-                                <div className="screw-face side s5"></div>
-                                <div className="screw-face side s6"></div>
-                                <div className="screw-face side s7"></div>
-                                <div className="screw-face side s8"></div>
-                                <div className="screw-face side s9"></div>
-                                <div className="screw-face side s10"></div>
-                                <div className="screw-face side s11"></div>
-                                <div className="screw-face side s12"></div>
-                                <div className="screw-face side s13"></div>
-                            </div>
-                        </div>
-                        <div className="screw-scene" id="screw-scene3">
-                            <div className="screw-shape cylinder-1 cyl-1">
-                                <div className="screw-face bm"></div>
-                                <div className="screw-face tp"></div>
-                                <div className="screw-face side s0"></div>
-                                <div className="screw-face side s1"></div>
-                                <div className="screw-face side s2"></div>
-                                <div className="screw-face side s3"></div>
-                                <div className="screw-face side s4"></div>
-                                <div className="screw-face side s5"></div>
-                                <div className="screw-face side s6"></div>
-                                <div className="screw-face side s7"></div>
-                                <div className="screw-face side s8"></div>
-                                <div className="screw-face side s9"></div>
-                                <div className="screw-face side s10"></div>
-                                <div className="screw-face side s11"></div>
-                                <div className="screw-face side s12"></div>
-                                <div className="screw-face side s13"></div>
-                            </div>
-                        </div>
-                        <div className="screw-scene" id="screw-scene4">
-                            <div className="screw-shape cylinder-1 cyl-1">
-                                <div className="screw-face bm"></div>
-                                <div className="screw-face tp"></div>
-                                <div className="screw-face side s0"></div>
-                                <div className="screw-face side s1"></div>
-                                <div className="screw-face side s2"></div>
-                                <div className="screw-face side s3"></div>
-                                <div className="screw-face side s4"></div>
-                                <div className="screw-face side s5"></div>
-                                <div className="screw-face side s6"></div>
-                                <div className="screw-face side s7"></div>
-                                <div className="screw-face side s8"></div>
-                                <div className="screw-face side s9"></div>
-                                <div className="screw-face side s10"></div>
-                                <div className="screw-face side s11"></div>
-                                <div className="screw-face side s12"></div>
-                                <div className="screw-face side s13"></div>
-                            </div>
-                        </div>
-                        <div className="screw-scene" id="screw-scene5">
-                            <div className="screw-shape cylinder-1 cyl-1">
-                                <div className="screw-face bm"></div>
-                                <div className="screw-face tp"></div>
-                                <div className="screw-face side s0"></div>
-                                <div className="screw-face side s1"></div>
-                                <div className="screw-face side s2"></div>
-                                <div className="screw-face side s3"></div>
-                                <div className="screw-face side s4"></div>
-                                <div className="screw-face side s5"></div>
-                                <div className="screw-face side s6"></div>
-                                <div className="screw-face side s7"></div>
-                                <div className="screw-face side s8"></div>
-                                <div className="screw-face side s9"></div>
-                                <div className="screw-face side s10"></div>
-                                <div className="screw-face side s11"></div>
-                                <div className="screw-face side s12"></div>
-                                <div className="screw-face side s13"></div>
-                            </div>
-                        </div>
+                        <Screw id={1} />
+                        <Screw id={2} />
+                        <Screw id={3} />
+                        <Screw id={4} />
+                        <Screw id={5} />
                     </div>
                 </div>
             </div>
