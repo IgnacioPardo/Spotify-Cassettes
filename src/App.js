@@ -12,6 +12,10 @@ import switchSound from './components/sounds/switch.mp3'
 import rewindSound from './components/sounds/rewind.mp3'
 import forwardSound from './components/sounds/fforward.mp3'
 
+import getTopArtists from './spotify';
+
+getTopArtists().then(data => console.log(data));
+
 const PlayerIcon = ({name}) => {
   // Player icons
   let icons = {
