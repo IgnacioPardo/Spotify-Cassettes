@@ -1,133 +1,189 @@
-import React, { useState, useEffect } from 'react';
-import tdkLogo  from './icons/tdk.svg'
-
-const Color2RGB = (color) => {
-  return `rgb(${color[0]}, ${color[1]}, ${color[2]})`
-}
-
+import React, { useState, useEffect } from "react";
+import tdkLogo from "./icons/tdk.svg";
+import { fetchTracksAudioFeatures } from "../spotify.js";
+import ColorThief from "../../node_modules/colorthief/dist/color-thief.mjs";
+import { sortColorsByLuma, Color2RGB } from "../color_utils.js";
 const Cassette = (props) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playerPlaying, setPlayerPlaying] = useState(false);
 
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [playerPlaying, setPlayerPlaying] = useState(false)
-
-  const [hover, setHover] = useState(false)
-  const [song, setSong] = useState(props.songs[props.songId])
-  //const [pallete, setPallete] = useState([])
+  const [hover, setHover] = useState(false);
+  const [song, setSong] = useState(props.songs[props.songId]);
+  const [palette, setPallete] = useState(null);
 
   var reel_speed = 1;
 
-  if (song.audio_features){
+  if (song.audio_features) {
     reel_speed = (100 / song.audio_features.tempo) * 2;
   }
 
   var shift = song.id - 1 + props.shift;
+  var searchParams = new URLSearchParams(window.location.search);
 
   useEffect(() => {
-    setSong(props.songs[props.songId])
-  }, [props.songId, props])
+    var song_update = props.songs[props.songId];
+    if (searchParams.has("access_token")) {
+      var accessToken = searchParams.get("access_token");
+      if (song.spotify_id) {
+        fetchTracksAudioFeatures(accessToken, [song.spotify_id], (trackAudioFeatures) => {
+          song_update.audio_features = trackAudioFeatures.audio_features[0];
+        });
+      }
+      console.log("loading image for song " + song.name);
+      var img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.src = song_update.artwork;
+      console.log(img);
+
+      img.onload = function () {
+        console.log("loaded image for song " + song.name);
+        var colorThief = new ColorThief();
+        var calc_palette = colorThief.getPalette(img, 5);
+        var dominantColor = sortColorsByLuma(colorThief.getPalette(img, 3))[0];
+        var rgb = Color2RGB(dominantColor);
+        song_update.bg_color = rgb;
+        song_update.calc_palette = calc_palette;
+        setPallete(calc_palette);
+        setSong(song_update);
+      };
+    }
+  }, [song]);
+
+  useEffect(() => {
+    setSong(props.songs[props.songId]);
+  }, [props.songId, props]);
 
   useEffect(() => {
     if (isPlaying) {
-        //console.log(document.querySelector(`#Cassette_${song.id}`))
-        //console.log(props.currentItemId)
-        props.setCurrentItemId(song.id)
+      //console.log(document.querySelector(`#Cassette_${song.id}`))
+      //console.log(props.currentItemId)
+      props.setCurrentItemId(song.id);
+      console.log(song);
     } else {
-        if (props.currentItemId === song.id) {
-            props.setCurrentItemId(null)
-        }
-        else if (props.currentItemId != null) {
-            props.setCurrentItemId(props.currentItemId)
-        }
+      if (props.currentItemId === song.id) {
+        props.setCurrentItemId(null);
+      } else if (props.currentItemId != null) {
+        props.setCurrentItemId(props.currentItemId);
+      }
     }
-  }, [isPlaying, props])
+  }, [isPlaying, props]);
 
   useEffect(() => {
     if (props.currentItemId === song.id) {
-        setIsPlaying(true)
-        setPlayerPlaying(true)
+      setIsPlaying(true);
+      setPlayerPlaying(true);
+    } else {
+      setPlayerPlaying(props.currentItemId != null);
+      setIsPlaying(false);
     }
-    else {
-        setPlayerPlaying(props.currentItemId != null)
-        setIsPlaying(false)
-    }
-  }, [props.currentItemId, props])
+  }, [props.currentItemId, props]);
 
   useEffect(() => {
     if (hover) {
       document.body.style.backgroundColor = song.bg_color;
     }
-  }, [hover, props])
+  }, [hover, props]);
 
   return (
     <>
-      <div 
-          className={["cassette", isPlaying ? "playing" : ""].join(" ")}
-          style={{ 
-            transform: `translate3d(${(shift * -100)}px, ${(shift*10)}px, 0)`,
-            transition: "transform 0.2s ease-in-out",
-            //filter: playerPlaying ? isPlaying || hover ? "none" : "blur(4px)" : "none",
-            //zIndex: props.shift + 1,
-            //zIndex: isPlaying ? 100 : 0,
-            //opacity: playerPlaying ? isPlaying ? 1 : 0.5 : 1,
+      <div
+        className={["cassette", isPlaying ? "playing" : ""].join(" ")}
+        style={{
+          transform: `translate3d(${shift * -100}px, ${shift * 10}px, 0)`,
+          transition: "transform 0.2s ease-in-out",
+          //filter: playerPlaying ? isPlaying || hover ? "none" : "blur(4px)" : "none",
+          //zIndex: props.shift + 1,
+          //zIndex: isPlaying ? 100 : 0,
+          //opacity: playerPlaying ? isPlaying ? 1 : 0.5 : 1,
         }}
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-          onClick={() => {
-            setIsPlaying(!isPlaying)
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        onClick={() => {
+          setIsPlaying(!isPlaying);
 
-            if (!props.isFullscreen){
-              props.setFullscreen(true);
-            }
-          }}
-          id={"Cassette_" + song.id}
-          aria-label={song.name}
-          aria-checked={isPlaying}
+          if (!props.isFullscreen) {
+            props.setFullscreen(true);
+          }
+        }}
+        id={"Cassette_" + song.id}
+        aria-label={song.name}
+        aria-checked={isPlaying}
       >
         <div className="shadow-scene">
-          <div 
+          <div
             className="shadow-shape1"
-            style={{ 
-                boxShadow: isPlaying ? "" : `0px 0px ${hover ? 20 : 0}px 10px rgba(0, 0, 0, 1)`,
-                opacity: isPlaying ? 0 : hover ? 0.2 : 0.3
-          }}
+            style={{
+              boxShadow: isPlaying
+                ? ""
+                : `0px 0px ${hover ? 20 : 0}px 10px rgba(0, 0, 0, 1)`,
+              opacity: isPlaying ? 0 : hover ? 0.2 : 0.3,
+            }}
           ></div>
-          <div 
+          <div
             className="shadow-shape2"
             style={{
-                boxShadow: isPlaying ? "" : `0px 0px ${hover ? 20 : 0}px 10px rgba(0, 0, 0, 1)`,
-                opacity: isPlaying ? 0 : hover ? 0.2 : 0.3
+              boxShadow: isPlaying
+                ? ""
+                : `0px 0px ${hover ? 20 : 0}px 10px rgba(0, 0, 0, 1)`,
+              opacity: isPlaying ? 0 : hover ? 0.2 : 0.3,
             }}
           ></div>
         </div>
 
-        <div 
+        <div
           className="cassette-scene"
-          style={{ transform: 
-            isPlaying ?
-            `perspective(10000px) rotateX(85deg) rotateZ(390deg) translateZ(24vw) rotateY(0deg) scale3d(1.4, 1.4, 1.4)` :
-            `perspective(10000px) rotateX(80deg) rotateZ(40deg) translateZ(${(hover ?  4: 0)}vw)` 
-        }}
+          style={{
+            transform: isPlaying
+              ? `perspective(10000px) rotateX(85deg) rotateZ(390deg) translateZ(24vw) rotateY(0deg) scale3d(1.4, 1.4, 1.4)`
+              : `perspective(10000px) rotateX(80deg) rotateZ(40deg) translateZ(${
+                  hover ? 4 : 0
+                }vw)`,
+          }}
         >
           <div className="cassette-shape">
             <div className="case-scene">
               <div className="ft face">
                 <div className="full-mask">
                   <div className="color_bars">
-                    {
-                      song.pallette ? song.pallette.map((color, index) => {
+                    {palette ? (
+                      palette.map((color, index) => {
                         return (
-                          <div className="color_bar" id={"color_bar_" + index} style={{ backgroundColor: Color2RGB(color) }}></div>
-                        )
-                      }) :
-                        <>
-                          <div className="color_bar" id="color_bar_0" style={{ backgroundColor: "rgb(255, 0, 0)" }}></div>
-                          <div className="color_bar" id="color_bar_1" style={{ backgroundColor: "rgb(0, 255, 0)" }}></div>
-                          <div className="color_bar" id="color_bar_2" style={{ backgroundColor: "rgb(0, 0, 255)" }}></div>
-                          <div className="color_bar" id="color_bar_3" style={{ backgroundColor: "rgb(255, 255, 0)" }}></div>
-                          <div className="color_bar" id="color_bar_4" style={{ backgroundColor: "rgb(255, 0, 255)" }}></div>
-                        </> 
-                    }
-                    
+                          <div
+                            className="color_bar"
+                            id={"color_bar_" + index}
+                            style={{ backgroundColor: Color2RGB(color) }}
+                          ></div>
+                        );
+                      })
+                    ) : (
+                      <>
+                        <div
+                          className="color_bar"
+                          id="color_bar_0"
+                          style={{ backgroundColor: "rgb(255, 0, 0)" }}
+                        ></div>
+                        <div
+                          className="color_bar"
+                          id="color_bar_1"
+                          style={{ backgroundColor: "rgb(0, 255, 0)" }}
+                        ></div>
+                        <div
+                          className="color_bar"
+                          id="color_bar_2"
+                          style={{ backgroundColor: "rgb(0, 0, 255)" }}
+                        ></div>
+                        <div
+                          className="color_bar"
+                          id="color_bar_3"
+                          style={{ backgroundColor: "rgb(255, 255, 0)" }}
+                        ></div>
+                        <div
+                          className="color_bar"
+                          id="color_bar_4"
+                          style={{ backgroundColor: "rgb(255, 0, 255)" }}
+                        ></div>
+                      </>
+                    )}
                   </div>
                   <div className="cassette_face_info">
                     <span>
@@ -142,13 +198,17 @@ const Cassette = (props) => {
                     <br />
 
                     {/* <tdkLogo /> */}
-                    <img src={tdkLogo} alt="TDK Logo" width="60" height="60" 
-                        style={{
-                          margin: "0 auto",
-                          position: "relative",
-                          bottom: "-6px",
-                          left: "0px"
-                        }} 
+                    <img
+                      src={tdkLogo}
+                      alt="TDK Logo"
+                      width="60"
+                      height="60"
+                      style={{
+                        margin: "0 auto",
+                        position: "relative",
+                        bottom: "-6px",
+                        left: "0px",
+                      }}
                     />
                   </div>
                 </div>
@@ -156,16 +216,19 @@ const Cassette = (props) => {
               <div className="bk face"></div>
               <div className="rt face">
                 <div className="color_dots">
-                  {
-                    song.pallette ?
-                      song.pallette.map((color, index) => {
-                        return (
-                          <div className={"color_dot dot" + index} style={{ backgroundColor: Color2RGB(color) }}></div>
-                        )
-                      })
-                      : <></>
-                    }
-                  </div>
+                  {palette ? (
+                    palette.map((color, index) => {
+                      return (
+                        <div
+                          className={"color_dot dot" + index}
+                          style={{ backgroundColor: Color2RGB(color) }}
+                        ></div>
+                      );
+                    })
+                  ) : (
+                    <></>
+                  )}
+                </div>
               </div>
               <div className="lt face"></div>
               <div className="tp face"></div>
@@ -173,10 +236,14 @@ const Cassette = (props) => {
             </div>
 
             <div className="reel-scene" id="reel-scene1">
-              <div className="reel-shape cylinder-2 cyl-2"
-                style={{ 
-                    animation: (isPlaying || hover) ? `spin ${reel_speed}s linear infinite` : "unset",
-                    backgroundColor: song.bg_color
+              <div
+                className="reel-shape cylinder-2 cyl-2"
+                style={{
+                  animation:
+                    isPlaying || hover
+                      ? `spin ${reel_speed}s linear infinite`
+                      : "unset",
+                  backgroundColor: song.bg_color,
                 }}
               >
                 <div className="reel-face bm">
@@ -210,10 +277,14 @@ const Cassette = (props) => {
               </div>
             </div>
             <div className="reel-scene" id="reel-scene2">
-              <div className="reel-shape cylinder-2 cyl-2"
+              <div
+                className="reel-shape cylinder-2 cyl-2"
                 style={{
-                    animation: (isPlaying || hover) ? `spin ${reel_speed}s linear infinite` : "unset",
-                    backgroundColor: props.bg_color
+                  animation:
+                    isPlaying || hover
+                      ? `spin ${reel_speed}s linear infinite`
+                      : "unset",
+                  backgroundColor: props.bg_color,
                 }}
               >
                 <div className="reel-face bm">
@@ -385,38 +456,35 @@ const Cassette = (props) => {
       </div>
     </>
   );
-}
+};
 
 const CassetteGallery = (props) => {
   return (
     <>
-    <div 
-      className="cassette-gallery" 
-      id="cassette-gallery" 
-      style={
-        props.style
-      }
-      onWheel={props.handleScroll}
-    >
-      {
-        props.songs.map((song, index) => {
-          return <Cassette 
-                    songs={props.songs}
-                    songId={index}
-                    key={index} 
-                    setCurrentItemId={props.setCurrentItemId}
-                    currentItemId={props.currentItemId}
-                    shift={props.shift}
-                    isFullscreen={props.isFullscreen}
-                    setFullscreen={props.setFullscreen}
-                />
-                
-        })
-      }
-    </div>
+      <div
+        className="cassette-gallery"
+        id="cassette-gallery"
+        style={props.style}
+        onWheel={props.handleScroll}
+      >
+        {props.songs.map((song, index) => {
+          return (
+            <Cassette
+              songs={props.songs}
+              setSongs={props.setSongs}
+              songId={index}
+              key={index}
+              setCurrentItemId={props.setCurrentItemId}
+              currentItemId={props.currentItemId}
+              shift={props.shift}
+              isFullscreen={props.isFullscreen}
+              setFullscreen={props.setFullscreen}
+            />
+          );
+        })}
+      </div>
     </>
-  )
-}
-
+  );
+};
 
 export default CassetteGallery;

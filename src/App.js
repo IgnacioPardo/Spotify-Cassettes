@@ -20,6 +20,8 @@ import defaultSongs from "./defaultSongs.js";
 //import ColorThief from 'colorthief';
 import ColorThief from '../node_modules/colorthief/dist/color-thief.mjs';
 
+import { sortColorsByLuma } from "./color_utils.js";
+
 const PlayerIcon = ({ name }) => {
   // Player icons
   let icons = {
@@ -117,42 +119,6 @@ const PlayerControls = ({ setControlAction }) => {
 };
 
 let colors = ["#4cb8f5", "#a6e630", "#f5e82f", "#E75776", "#414073", "#4C3B4D"];
-
-function bestColorByLuma(colors) {
-  // Find the best color by luma
-  var bestColor = colors[0];
-  var bestLuma = 0;
-
-  colors.forEach((color) => {
-    var luma = 0.2126 * color[0] + 0.7152 * color[1] + 0.0722 * color[2];
-
-    if (luma > bestLuma) {
-      bestLuma = luma;
-      bestColor = color;
-    }
-  });
-
-  return bestColor;
-}
-
-function sortColorsByLuma(colors) {
-  // Sort colors by luma
-  var sortedColors = [];
-
-  colors.forEach((color) => {
-    var luma = 0.2126 * color[0] + 0.7152 * color[1] + 0.0722 * color[2];
-
-    sortedColors.push([color, luma]);
-  });
-
-  sortedColors.sort((a, b) => {
-    return b[1] - a[1];
-  });
-  
-  return sortedColors.map((color) => {
-    return color[0];
-  });
-}
 
 function formatTime(time) {
   // Format time to mm:ss
@@ -302,39 +268,39 @@ function App() {
       });
 
       filteredTracks.slice(0, 10).forEach((item, index) => {
-        var artwork_url = item.album.images[0].url;
-        if (artwork_url != null) {
-          // retrieve artwork from spotify api
-          // find most dominant color
+        // var artwork_url = item.album.images[0].url;
+        // if (artwork_url != null) {
+        //   // retrieve artwork from spotify api
+        //   // find most dominant color
 
-          var img = new Image();
-          img.crossOrigin = "Anonymous";
-          img.src = artwork_url;
+        //   var img = new Image();
+        //   img.crossOrigin = "Anonymous";
+        //   img.src = artwork_url;
           
-          setIsLoadingCoverArts(true);
+        //   setIsLoadingCoverArts(true);
 
-          img.onload = () => {
-            setLoadedCoverArts((prevLoadedCoverArts) => [
-              ...prevLoadedCoverArts,
-              [index, img],
-            ]);
-          }
-        }
+        //   img.onload = () => {
+        //     setLoadedCoverArts((prevLoadedCoverArts) => [
+        //       ...prevLoadedCoverArts,
+        //       [index, img],
+        //     ]);
+        //   }
+        // }
         
-        if (searchParams.has("access_token")) {
-          var accessToken = searchParams.get("access_token");
-          console.log("fetching audio features");
+        // if (searchParams.has("access_token")) {
+        //   var accessToken = searchParams.get("access_token");
+        //   console.log("fetching audio features");
 
-          setIsLoadingAudioFeatures(true);
+        //   setIsLoadingAudioFeatures(true);
 
-          fetchTracksAudioFeatures(accessToken, [item.id], (trackAudioFeatures) => {
-            setLoadedAudioFeatures((prevLoadedAudioFeatures) => [
-              ...prevLoadedAudioFeatures,
-              [item.id, trackAudioFeatures.audio_features[0]],
-            ]);
-            console.log({trackAudioFeatures});
-          });
-        }
+        //   fetchTracksAudioFeatures(accessToken, [item.id], (trackAudioFeatures) => {
+        //     setLoadedAudioFeatures((prevLoadedAudioFeatures) => [
+        //       ...prevLoadedAudioFeatures,
+        //       [item.id, trackAudioFeatures.audio_features[0]],
+        //     ]);
+        //     console.log({trackAudioFeatures});
+        //   });
+        // }
 
         newSongs.push({
           name: item.name,
@@ -613,6 +579,7 @@ function App() {
 
       <CassetteGallery
         songs={songs}
+        setSongs={setSongs}
         setCurrentItemId={setCurrentItemId}
         currentItemId={currentItemId}
         style={{
