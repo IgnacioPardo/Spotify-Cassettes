@@ -14,7 +14,7 @@ import forwardSound from "./components/sounds/fforward.mp3";
 
 import spotifyLogo from "./components/icons/spotify.svg";
 
-import { fetchTopTracks, fetchTopArtists, fetchUserData } from "./spotify.js";
+import { fetchTopTracks, fetchTopArtists, fetchUserData, fetchTracksAudioFeatures } from "./spotify.js";
 import defaultSongs from "./defaultSongs.js";
 
 //import ColorThief from 'colorthief';
@@ -34,6 +34,38 @@ const PlayerIcon = ({ name }) => {
       <img src={icons[name]} alt={name} />
     </div>
   );
+};
+
+const TimeRangeSelector = ({ setRange, timeRange }) => {
+  return (
+    <>
+      <div className="time_range_selector switch-field">
+        <input
+          type="radio" id="short_term" name="time_range" value="short_term"
+          checked={timeRange === "short_term"}
+          onChange={() => setRange("short_term")}
+        />
+        <label htmlFor="short_term">4 Weeks</label>
+        <input
+          type="radio"
+          id="medium_term"
+          name="time_range"
+          value="medium_term"
+          checked={timeRange === "medium_term"}
+          onChange={() => setRange("medium_term")}
+        />
+        <label htmlFor="medium_term">6 Months</label>
+        <input
+          type="radio"
+          id="long_term"
+          name="time_range"
+          value="long_term"
+          checked={timeRange === "long_term"}
+          onChange={() => setRange("long_term")}
+        />
+        <label htmlFor="long_term">All Time</label>
+      </div>
+    </>);
 };
 
 const PlayerControls = ({ setControlAction }) => {
@@ -140,7 +172,7 @@ function formatTime(time) {
 
 function App() {
   const [currentItemId, setCurrentItemId] = useState(null);
-  const [currentSong, setCurrentSong] = useState("");
+  const [currentSong, setCurrentSong] = useState(null);
   const [currentSongTime, setCurrentSongTime] = useState(0);
   const [currentSongDuration, setCurrentSongDuration] = useState(0);
 
@@ -157,43 +189,58 @@ function App() {
   const [songs, setSongs] = useState(defaultSongs);
 
   const [loadedCoverArts, setLoadedCoverArts] = useState([]);
+  const [loadedAudioFeatures, setLoadedAudioFeatures] = useState([]);
+  const [timeRange, setTimeRange] = useState("short_term");
+  const [timeRangeChanged, setTimeRangeChanged] = useState(false);
+
+  const [isLoadingCoverArts, setIsLoadingCoverArts] = useState(false);
+  const [isLoadingAudioFeatures, setIsLoadingAudioFeatures] = useState(false);
+
+  var searchParams = new URLSearchParams(window.location.search);
 
   useEffect(() => {
     // Fetch user data
-    var searchParams = new URLSearchParams(window.location.search);
-
     if (searchParams.has("access_token")) {
       var accessToken = searchParams.get("access_token");
-
-      setIsSignedIn(true);
-
       console.log(accessToken);
-      try {
-        fetchUserData(accessToken, setUserData);
+      
+      fetchUserData(accessToken, setUserData, (err) => { console.log(err)}, () => {});
+      fetchTopArtists(accessToken, setUserTopArtists, (err) => { console.log(err)}, timeRange);
+      fetchTopTracks(accessToken, setUserTopTracks, (err) => { console.log(err)}, timeRange);
 
-        fetchTopArtists(accessToken, setUserTopArtists);
-
-        fetchTopTracks(accessToken, setUserTopTracks);
-      } catch (err) {
-        console.error(err);
-      }
     } else {
       console.log("No access token");
     }
   }, []);
 
   useEffect(() => {
-    console.log({
-      topArtists: userTopArtists,
-      topTracks: userTopTracks,
-      userData: userData,
-    });
+    if (searchParams.has("access_token")) {
+      var accessToken = searchParams.get("access_token");
+      fetchTopTracks(accessToken, setUserTopTracks, (err) => { console.log(err) }, timeRange);
+    }
+  }, [timeRange]);
+
+  useEffect(() => {
+    // if (songs && loadedCoverArts && loadedAudioFeatures){
+    //   setCurrentSong(null);
+    //   setCurrentItemId(null);
+    // }
+  }, [songs, loadedCoverArts, loadedAudioFeatures]);
+
+  useEffect(() => {
+    if (userTopTracks && userTopArtists && userData) {
+      setIsSignedIn(true);
+      console.log({
+        topArtists: userTopArtists,
+        topTracks: userTopTracks,
+        userData: userData,
+      });
+    }
   }, [userTopArtists, userTopTracks, userData]);
 
   useEffect(() => {
-    console.log({ loadedCoverArts });
     if (userTopTracks && loadedCoverArts.length == songs.length) {
-
+      // console.log({ loadedCoverArts });
       var coloredSongs = [];
 
       loadedCoverArts.forEach((item) => {
@@ -204,29 +251,50 @@ function App() {
         var dominantColor = sortColorsByLuma(pallette)[0];
         var rgb = `rgb(${dominantColor[0]}, ${dominantColor[1]}, ${dominantColor[2]})`;
         
-        console.log({rgb});
-        console.log({item});
+        //console.log({rgb});
+        //console.log({item});
 
         var song = songs.find((song) => {
           return song.id == item[0];
         });
 
         song.bg_color = rgb;
-        song.pallette = pallette;
-        console.log({song});
+        song.pallette = colorThief.getPalette(item[1], 5);
+        // console.log({song});
         coloredSongs.push(song);
       });
 
-      console.log({coloredSongs});
-
+      // console.log({coloredSongs});
       setSongs(coloredSongs);
+      setIsLoadingCoverArts(false);
     }
-
   }, [loadedCoverArts, userTopTracks]);
+
+  useEffect(() => {
+    if (userTopTracks && loadedAudioFeatures.length == songs.length) {
+      // console.log({ loadedAudioFeatures });
+      var audioFeatures = [];
+
+      loadedAudioFeatures.forEach((item) => {
+        var song = songs.find((song) => {
+          return song.spotify_id == item[0];
+        });
+        console.log({song, item});
+        song.audio_features = item[1]
+        audioFeatures.push(song);
+      });
+
+      // console.log({audioFeatures});
+
+      setSongs(audioFeatures);
+      setIsLoadingAudioFeatures(false);
+    }
+  }, [loadedAudioFeatures, userTopTracks]);
   
   // set songs
   useEffect(() => {
     if (userTopTracks) {
+      var searchParams = new URLSearchParams(window.location.search);
       let newSongs = [];
 
       let filteredTracks = userTopTracks.items.filter((item) => {
@@ -237,26 +305,46 @@ function App() {
         var artwork_url = item.album.images[0].url;
         if (artwork_url != null) {
           // retrieve artwork from spotify api
-          // find most prominent color
+          // find most dominant color
+
           var img = new Image();
           img.crossOrigin = "Anonymous";
           img.src = artwork_url;
           
+          setIsLoadingCoverArts(true);
+
           img.onload = () => {
             setLoadedCoverArts((prevLoadedCoverArts) => [
               ...prevLoadedCoverArts,
               [index, img],
             ]);
           }
-
         }
+        
+        if (searchParams.has("access_token")) {
+          var accessToken = searchParams.get("access_token");
+          console.log("fetching audio features");
+
+          setIsLoadingAudioFeatures(true);
+
+          fetchTracksAudioFeatures(accessToken, [item.id], (trackAudioFeatures) => {
+            setLoadedAudioFeatures((prevLoadedAudioFeatures) => [
+              ...prevLoadedAudioFeatures,
+              [item.id, trackAudioFeatures.audio_features[0]],
+            ]);
+            console.log({trackAudioFeatures});
+          });
+        }
+
         newSongs.push({
           name: item.name,
           album: item.album.name,
+          artwork: item.album.images[0].url,
           artist: item.artists[0].name,
           bg_color: colors[index % colors.length],
           url: item.preview_url,
           id: index,
+          spotify_id: item.id,
           genres: item.artists[0].genres,
           popularity: item.popularity,
           spotify_url: item.external_urls.spotify,
@@ -264,8 +352,8 @@ function App() {
         });
       });
       //setTopSongs(newSongs);
+      // console.log({ newSongs });
       setSongs(newSongs);
-      console.log({ newSongs });
     }
   }, [userTopTracks]);
 
@@ -303,13 +391,17 @@ function App() {
       }
       playSound("click");
     } else if (controlAction === "stop") {
-      setControlAction("play_pause");
-      setControlAction("play_pause");
+      setControlAction("");
       var playingCassette = document.querySelector(".cassette.playing");
       console.log(playingCassette);
       if (playingCassette) {
         playingCassette.click();
       }
+      audio.pause();
+      audio.currentTime = 0;
+      setCurrentSongTime(0);
+      setCurrentSongDuration(0);
+      setCurrentSong(null);
     } else if (controlAction === "rewind") {
       var pausePromise = audio.pause();
 
@@ -374,29 +466,33 @@ function App() {
     if (playPromise !== undefined) {
       playPromise.then((_) => {}).catch((error) => {});
     }
-  }, [controlAction]);
+  }, [controlAction, currentSong]);
 
   useEffect(() => {
+    console.log("current item id changed");
     if (currentItemId !== null) {
-      setCurrentSong(songs[currentItemId].url);
+      var song = songs.find((song) => {
+        return song.id === currentItemId;
+      });
+      setCurrentSong(song);
+      console.log("current song: ", song);
 
       let audio = document.querySelector("#musicPlayer");
       audio.addEventListener("timeupdate", () => {
         setCurrentSongTime(audio.currentTime);
         setCurrentSongDuration(audio.duration);
       });
-
       setScrollShift(-currentItemId - 5);
-
-      console.log(songs[currentItemId]);
     } else {
-      setCurrentSong("");
+      console.log("current item id is null");
+      setControlAction("stop");
+      // setCurrentSong(null);
     }
     playSound("switch");
   }, [currentItemId, songs]);
 
   useEffect(() => {
-    if (currentSong === "") {
+    if (currentSong === null) {
       setCurrentSongTime(0);
       setCurrentSongDuration(0);
     }
@@ -415,8 +511,27 @@ function App() {
   return (
     <div id="App" onWheel={handleScroll}>
       <div className="menu">
-        {!isSignedIn ? (
-          <a className="login_btn" href="/login">
+        {isSignedIn ? (
+          <>            
+            <TimeRangeSelector setRange={setTimeRange} timeRange={timeRange} />
+            <div className="user_info">
+              <img
+                src={userData?.images[0].url}
+                alt="{userData.display_name}'s Profile Picture"
+                className="user_profile_pic"
+              />
+              <a className="logout_btn spotify_btn" href="/app"><img
+                src={spotifyLogo}
+                alt="Spotify Logo"
+                className="spotify_logo"
+              />
+                <span>Logout</span>
+              </a>
+            </div>
+          </>
+        ) : (
+          <>
+          <a className="login_btn spotify_btn" href="/login">
             <img
               src={spotifyLogo}
               alt="Spotify Logo"
@@ -424,19 +539,17 @@ function App() {
             />
             <span>Login with Spotify</span>
           </a>
-        ) : (
-          <a className="login_btn" href="/app">
-            <img
-              src={spotifyLogo}
-              alt="Spotify Logo"
-              className="spotify_logo"
-            />
-            <span>Logout</span>
-          </a>
+          </>
         )}
       </div>
       <div className="info" id="info_panel">
-        <h1>Spotify Cassettes</h1>
+        {
+          userData?.display_name ? (
+            <h1 className="user_name">{userData.display_name}'s <b>Spotify Casettes</b></h1>
+          ) : (
+            <h1 className="user_name">Spotify Casettes</h1>
+          )
+        }
         <br></br>
         <div
           className="song_info"
@@ -446,14 +559,17 @@ function App() {
           }}
         >
           <div className="song_info_display">
-            <div className="song_info_image">
-              <img src={songs[currentItemId]?.image} alt="Album Artwork" />
-            </div>
+            {
+              currentSong?.image ?
+              <div className="song_info_image">
+                <img src={currentSong?.image} alt="Album Artwork" />
+              </div> : <></>
+            }
             <div className="song_info_texts">
-              <h2>{songs[currentItemId]?.name}</h2>
+              <h2>{currentSong?.name}</h2>
               <h3>
-                {songs[currentItemId]?.album} {currentItemId ? "-" : ""}{" "}
-                {songs[currentItemId]?.artist}
+                {currentSong?.album} {currentItemId ? "-" : ""}{" "}
+                {currentSong?.artist}
               </h3>
             </div>
           </div>
@@ -511,7 +627,7 @@ function App() {
 
       <audio
         id="musicPlayer"
-        src={currentSong}
+        src={currentSong?.url}
         controls
         autoPlay
         style={{ display: "none" }}

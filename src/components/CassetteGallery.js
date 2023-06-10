@@ -7,17 +7,24 @@ const Color2RGB = (color) => {
 
 const Cassette = (props) => {
 
-  var song = props.song;
-
-  console.log(song.pallette)
-
   const [isPlaying, setIsPlaying] = useState(false)
   const [playerPlaying, setPlayerPlaying] = useState(false)
 
   const [hover, setHover] = useState(false)
+  const [song, setSong] = useState(props.songs[props.songId])
+  //const [pallete, setPallete] = useState([])
 
   var reel_speed = 1;
+
+  if (song.audio_features){
+    reel_speed = (100 / song.audio_features.tempo) * 2;
+  }
+
   var shift = song.id - 1 + props.shift;
+
+  useEffect(() => {
+    setSong(props.songs[props.songId])
+  }, [props.songId, props])
 
   useEffect(() => {
     if (isPlaying) {
@@ -105,7 +112,23 @@ const Cassette = (props) => {
             <div className="case-scene">
               <div className="ft face">
                 <div className="full-mask">
-
+                  <div className="color_bars">
+                    {
+                      song.pallette ? song.pallette.map((color, index) => {
+                        return (
+                          <div className="color_bar" id={"color_bar_" + index} style={{ backgroundColor: Color2RGB(color) }}></div>
+                        )
+                      }) :
+                        <>
+                          <div className="color_bar" id="color_bar_0" style={{ backgroundColor: "rgb(255, 0, 0)" }}></div>
+                          <div className="color_bar" id="color_bar_1" style={{ backgroundColor: "rgb(0, 255, 0)" }}></div>
+                          <div className="color_bar" id="color_bar_2" style={{ backgroundColor: "rgb(0, 0, 255)" }}></div>
+                          <div className="color_bar" id="color_bar_3" style={{ backgroundColor: "rgb(255, 255, 0)" }}></div>
+                          <div className="color_bar" id="color_bar_4" style={{ backgroundColor: "rgb(255, 0, 255)" }}></div>
+                        </> 
+                    }
+                    
+                  </div>
                   <div className="cassette_face_info">
                     <span>
                       {song.name}
@@ -132,15 +155,17 @@ const Cassette = (props) => {
               </div>
               <div className="bk face"></div>
               <div className="rt face">
-                {
-                  song.pallette ?
-                    <div className="color_dots">
-                      <div className="color_dot dot0" style={{ backgroundColor: Color2RGB(song.pallette[0]) }}></div>
-                      <div className="color_dot dot1" style={{ backgroundColor: Color2RGB(song.pallette[1]) }}></div>
-                      <div className="color_dot dot2" style={{ backgroundColor: Color2RGB(song.pallette[2]) }}></div>
-                    </div>
-                    : <></>
-                }
+                <div className="color_dots">
+                  {
+                    song.pallette ?
+                      song.pallette.map((color, index) => {
+                        return (
+                          <div className={"color_dot dot" + index} style={{ backgroundColor: Color2RGB(color) }}></div>
+                        )
+                      })
+                      : <></>
+                    }
+                  </div>
               </div>
               <div className="lt face"></div>
               <div className="tp face"></div>
@@ -376,8 +401,8 @@ const CassetteGallery = (props) => {
       {
         props.songs.map((song, index) => {
           return <Cassette 
-                    song={song}
-                  
+                    songs={props.songs}
+                    songId={index}
                     key={index} 
                     setCurrentItemId={props.setCurrentItemId}
                     currentItemId={props.currentItemId}
