@@ -39,4 +39,10 @@ const Color2RGB = (color) => {
   return `rgb(${color[0]}, ${color[1]}, ${color[2]})`
 }
 
-export { bestColorByLuma, sortColorsByLuma, Color2RGB };
+
+const noteByKey = (key) => {
+    var notes = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
+    return notes[key];
+}
+
+export { bestColorByLuma, sortColorsByLuma, Color2RGB, noteByKey };

@@ -6,7 +6,11 @@ const fetchTopTracks = (access_token, setData, onError, time_range = 'short_term
     }).then(res => {
         return res.json();
     }).then(data => {
-        //console.log(data);
+        
+        if (data.error) {
+            onError(data.error);
+            return;
+        }
         setData(data);
         callback();
     }).catch(onError);
@@ -20,7 +24,10 @@ const fetchTopArtists = (access_token, setData, onError, time_range = 'short_ter
     }).then(res => {
         return res.json();
     }).then(data => {
-        //console.log(data);
+        if (data.error) {
+            onError(data.error);
+            return;
+        }
         setData(data);
     }).catch(onError);
 }
@@ -35,6 +42,10 @@ const fetchUserData = (access_token, setData, onError) => {
         return res.json();
     }).then(data => {
         //console.log(data);
+        if (data.error) {
+            onError(data.error);
+            return;
+        }
         setData(data);
     }).catch(onError);
 }
@@ -48,6 +59,10 @@ const fetchTracksAudioFeatures = async (access_token, track_ids, callback) => {
     }).then(res => {
         return res.json();
     }).then(data => {
+        if (data.error) {
+            console.log(data.error);
+            return;
+        }
         callback(data);
         return data;
     }).catch(err => {

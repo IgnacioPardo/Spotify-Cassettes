@@ -15,12 +15,18 @@ import forwardSound from "./components/sounds/fforward.mp3";
 import spotifyLogo from "./components/icons/spotify.svg";
 
 import { fetchTopTracks, fetchTopArtists, fetchUserData, fetchTracksAudioFeatures } from "./spotify.js";
+// import { fetchTopTracksRateLimited, fetchTopArtistsRateLimited, fetchUserDataRateLimited, fetchTracksAudioFeaturesRateLimited } from "./spotify.js";
+
 import defaultSongs from "./defaultSongs.js";
 
-//import ColorThief from 'colorthief';
-import ColorThief from '../node_modules/colorthief/dist/color-thief.mjs';
+// import ColorThief from 'colorthief';
+import { sortColorsByLuma } from "./utils.js";
 
-import { sortColorsByLuma } from "./color_utils.js";
+// const fetchTopTracks = fetchTopTracksRateLimited,
+//   fetchTopArtists = fetchTopArtistsRateLimited,
+//   fetchUserData = fetchUserDataRateLimited,
+//   fetchTracksAudioFeatures = fetchTracksAudioFeaturesRateLimited;
+
 
 const PlayerIcon = ({ name }) => {
   // Player icons
@@ -136,6 +142,19 @@ function formatTime(time) {
   return `${minutes}:${seconds}`;
 }
 
+function handleAccessTokenError(err) {
+  // If access token is invalid, redirect to refresh_token endpoint with current refresh token
+  console.log("err", err);
+  if (err.status === 401) {
+    //var searchParams = new URLSearchParams(window.location.search);
+    //let refresh_token = searchParams.get("refresh_token");
+    //console.log("refresh_token", refresh_token);
+    //window.location.redirect(`/refresh_token?refresh_token=${refresh_token}`);
+    window.location.href = "/app";
+  }
+}
+
+
 function App() {
   const [currentItemId, setCurrentItemId] = useState(null);
   const [currentSong, setCurrentSong] = useState(null);
@@ -157,7 +176,6 @@ function App() {
   const [loadedCoverArts, setLoadedCoverArts] = useState([]);
   const [loadedAudioFeatures, setLoadedAudioFeatures] = useState([]);
   const [timeRange, setTimeRange] = useState("short_term");
-  const [timeRangeChanged, setTimeRangeChanged] = useState(false);
 
   const [isLoadingCoverArts, setIsLoadingCoverArts] = useState(false);
   const [isLoadingAudioFeatures, setIsLoadingAudioFeatures] = useState(false);
@@ -170,9 +188,9 @@ function App() {
       var accessToken = searchParams.get("access_token");
       console.log(accessToken);
       
-      fetchUserData(accessToken, setUserData, (err) => { console.log(err)}, () => {});
-      fetchTopArtists(accessToken, setUserTopArtists, (err) => { console.log(err)}, timeRange);
-      fetchTopTracks(accessToken, setUserTopTracks, (err) => { console.log(err)}, timeRange);
+      fetchUserData(accessToken, setUserData, handleAccessTokenError, () => {});
+      fetchTopArtists(accessToken, setUserTopArtists, handleAccessTokenError, timeRange);
+      fetchTopTracks(accessToken, setUserTopTracks, handleAccessTokenError, timeRange);
 
     } else {
       console.log("No access token");
@@ -182,7 +200,7 @@ function App() {
   useEffect(() => {
     if (searchParams.has("access_token")) {
       var accessToken = searchParams.get("access_token");
-      fetchTopTracks(accessToken, setUserTopTracks, (err) => { console.log(err) }, timeRange);
+      fetchTopTracks(accessToken, setUserTopTracks, handleAccessTokenError, timeRange);
     }
   }, [timeRange]);
 
@@ -204,7 +222,7 @@ function App() {
     }
   }, [userTopArtists, userTopTracks, userData]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (userTopTracks && loadedCoverArts.length == songs.length) {
       // console.log({ loadedCoverArts });
       var coloredSongs = [];
@@ -234,9 +252,9 @@ function App() {
       setSongs(coloredSongs);
       setIsLoadingCoverArts(false);
     }
-  }, [loadedCoverArts, userTopTracks]);
+  }, [loadedCoverArts, userTopTracks]); */
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (userTopTracks && loadedAudioFeatures.length == songs.length) {
       // console.log({ loadedAudioFeatures });
       var audioFeatures = [];
@@ -255,7 +273,7 @@ function App() {
       setSongs(audioFeatures);
       setIsLoadingAudioFeatures(false);
     }
-  }, [loadedAudioFeatures, userTopTracks]);
+  }, [loadedAudioFeatures, userTopTracks]); */
   
   // set songs
   useEffect(() => {
@@ -311,7 +329,6 @@ function App() {
           url: item.preview_url,
           id: index,
           spotify_id: item.id,
-          genres: item.artists[0].genres,
           popularity: item.popularity,
           spotify_url: item.external_urls.spotify,
           image: item.album.images[0].url,
@@ -359,7 +376,7 @@ function App() {
     } else if (controlAction === "stop") {
       setControlAction("");
       var playingCassette = document.querySelector(".cassette.playing");
-      console.log(playingCassette);
+      // console.log(playingCassette);
       if (playingCassette) {
         playingCassette.click();
       }
@@ -511,9 +528,9 @@ function App() {
       <div className="info" id="info_panel">
         {
           userData?.display_name ? (
-            <h1 className="user_name">{userData.display_name}'s <b>Spotify Casettes</b></h1>
+            <h1 className="user_name">{userData.display_name}'s <b>Spotify Cassettes</b></h1>
           ) : (
-            <h1 className="user_name">Spotify Casettes</h1>
+            <h1 className="user_name">Spotify Cassettes</h1>
           )
         }
         <br></br>
@@ -584,7 +601,7 @@ function App() {
         currentItemId={currentItemId}
         style={{
           transform:
-            currentItemId !== null ? "translateY(400px)" : "translateY(300px)",
+            currentItemId !== null ? "translateY(440px)" : "translateY(340px)",
           transition: "transform 0.5s ease-in-out",
         }}
         shift={scrollShift}

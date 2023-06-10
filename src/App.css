@@ -64,6 +64,22 @@ body {
   justify-content: center;
   align-items: center; }
 
+.song_key {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  z-index: 100;
+  border-radius: 50%;
+  border: 2px solid black;
+  color: black;
+  background-color: white; }
+
 .rt .face {
   display: flex;
   justify-content: center;
@@ -143,7 +159,8 @@ a {
   height: 100%;
   border-radius: 50%;
   border: 2px solid black;
-  padding: 2px; }
+  padding: 2px;
+  background-color: #1CB955; }
   .user_profile_pic img {
     height: 100%;
     border-radius: 50%;

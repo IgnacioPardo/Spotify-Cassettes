@@ -1,9 +1,9 @@
 {
-  "name": "spotify-casettes",
+  "name": "spotify-cassettes",
   "version": "0.1.0",
   "private": true,
   "main": "src/server.js",
-  "description": "Spotify Casettes Visualizer",
+  "description": "Spotify Cassettes Visualizer",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
