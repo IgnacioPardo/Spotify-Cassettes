@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import CassetteGallery from "./components/CassetteGallery";
+import CassetteGallery from "./components/CassetteGallery.js";
 
 import playPauseIcon from "./components/icons/play_pauseIcon.svg";
 import stopIcon from "./components/icons/stopIcon.svg";
@@ -14,7 +14,11 @@ import forwardSound from "./components/sounds/fforward.mp3";
 
 import spotifyLogo from "./components/icons/spotify.svg";
 
-import { fetchTopTracks, fetchTopArtists, fetchUserData } from "./spotify";
+import { fetchTopTracks, fetchTopArtists, fetchUserData } from "./spotify.js";
+import defaultSongs from "./defaultSongs.js";
+
+//import ColorThief from 'colorthief';
+import ColorThief from '../node_modules/colorthief/dist/color-thief.mjs';
 
 const PlayerIcon = ({ name }) => {
   // Player icons
@@ -80,7 +84,43 @@ const PlayerControls = ({ setControlAction }) => {
   );
 };
 
-let colors = ["#4cb8f5", "#a6e630", "#f5e82f", "#E75776"];
+let colors = ["#4cb8f5", "#a6e630", "#f5e82f", "#E75776", "#414073", "#4C3B4D"];
+
+function bestColorByLuma(colors) {
+  // Find the best color by luma
+  var bestColor = colors[0];
+  var bestLuma = 0;
+
+  colors.forEach((color) => {
+    var luma = 0.2126 * color[0] + 0.7152 * color[1] + 0.0722 * color[2];
+
+    if (luma > bestLuma) {
+      bestLuma = luma;
+      bestColor = color;
+    }
+  });
+
+  return bestColor;
+}
+
+function sortColorsByLuma(colors) {
+  // Sort colors by luma
+  var sortedColors = [];
+
+  colors.forEach((color) => {
+    var luma = 0.2126 * color[0] + 0.7152 * color[1] + 0.0722 * color[2];
+
+    sortedColors.push([color, luma]);
+  });
+
+  sortedColors.sort((a, b) => {
+    return b[1] - a[1];
+  });
+  
+  return sortedColors.map((color) => {
+    return color[0];
+  });
+}
 
 function formatTime(time) {
   // Format time to mm:ss
@@ -114,113 +154,30 @@ function App() {
   const [userTopTracks, setUserTopTracks] = useState(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
 
-  const [songs, setSongs] = useState([
-    {
-      name: "Nos Siguen Pegando Abajo",
-      album: "Clics modernos",
-      artist: "Charly García",
-      bg_color: "#4cb8f5",
-      url: "/audios/Nos Siguen Pegando Abajo.mp3",
-      id: 0,
-    },
-    {
-      name: "Promesas Sobre El Bidet",
-      album: "Piano Bar",
-      artist: "Charly García",
-      bg_color: "#a6e630",
-      url: "/audios/Promesas Sobre El Bidet.mp3",
-      id: 1,
-    },
-    {
-      name: "Hablando a Tu Corazón",
-      album: "Tango",
-      artist: "Charly García",
-      bg_color: "#f5e82f",
-      url: "/audios/Hablando a Tu Corazon.mp3",
-      id: 2,
-    },
-    {
-      name: "No Voy en Tren",
-      album: "Parte de la religión",
-      artist: "Charly García",
-      bg_color: "#E75776",
-      url: "/audios/No Voy en Tren.mp3",
-      id: 3,
-    },
-    {
-      name: "La Grasa de las Capitales",
-      album: "La Grasa de las Capitales",
-      artist: "Serú Girán",
-      bg_color: "#E75776",
-      url: "/audios/La Grasa de las Capitales.mp3",
-      id: 4,
-    },
-    {
-      name: "La Grasa de las Capitales",
-      album: "La Grasa de las Capitales",
-      artist: "Serú Girán",
-      bg_color: "#E75776",
-      url: "/audios/La Grasa de las Capitales.mp3",
-      id: 5,
-    },
-    {
-      name: "La Grasa de las Capitales",
-      album: "La Grasa de las Capitales",
-      artist: "Serú Girán",
-      bg_color: "#E75776",
-      url: "/audios/La Grasa de las Capitales.mp3",
-      id: 6,
-    },
-    {
-      name: "La Grasa de las Capitales",
-      album: "La Grasa de las Capitales",
-      artist: "Serú Girán",
-      bg_color: "#E75776",
-      url: "/audios/La Grasa de las Capitales.mp3",
-      id: 7,
-    },
-    {
-      name: "La Grasa de las Capitales",
-      album: "La Grasa de las Capitales",
-      artist: "Serú Girán",
-      bg_color: "#E75776",
-      url: "/audios/La Grasa de las Capitales.mp3",
-      id: 8,
-    },
-    {
-      name: "La Grasa de las Capitales",
-      album: "La Grasa de las Capitales",
-      artist: "Serú Girán",
-      bg_color: "#E75776",
-      url: "/audios/La Grasa de las Capitales.mp3",
-      id: 9,
-    },
-  ]);
+  const [songs, setSongs] = useState(defaultSongs);
+
+  const [loadedCoverArts, setLoadedCoverArts] = useState([]);
 
   useEffect(() => {
     // Fetch user data
     var searchParams = new URLSearchParams(window.location.search);
-    
+
     if (searchParams.has("access_token")) {
-      
       var accessToken = searchParams.get("access_token");
 
       setIsSignedIn(true);
 
       console.log(accessToken);
-      try{
+      try {
         fetchUserData(accessToken, setUserData);
 
         fetchTopArtists(accessToken, setUserTopArtists);
 
         fetchTopTracks(accessToken, setUserTopTracks);
-      }
-      catch(err){
+      } catch (err) {
         console.error(err);
       }
-    }
-    else
-    {
+    } else {
       console.log("No access token");
     }
   }, []);
@@ -233,6 +190,40 @@ function App() {
     });
   }, [userTopArtists, userTopTracks, userData]);
 
+  useEffect(() => {
+    console.log({ loadedCoverArts });
+    if (userTopTracks && loadedCoverArts.length == songs.length) {
+
+      var coloredSongs = [];
+
+      loadedCoverArts.forEach((item) => {
+        var colorThief = new ColorThief();
+        // var dominantColor = colorThief.getColor(item[1]);
+        var pallette = colorThief.getPalette(item[1], 3);
+        //console.log({ sortedColorsByLuma: sortColorsByLuma(pallete) });
+        var dominantColor = sortColorsByLuma(pallette)[0];
+        var rgb = `rgb(${dominantColor[0]}, ${dominantColor[1]}, ${dominantColor[2]})`;
+        
+        console.log({rgb});
+        console.log({item});
+
+        var song = songs.find((song) => {
+          return song.id == item[0];
+        });
+
+        song.bg_color = rgb;
+        song.pallette = pallette;
+        console.log({song});
+        coloredSongs.push(song);
+      });
+
+      console.log({coloredSongs});
+
+      setSongs(coloredSongs);
+    }
+
+  }, [loadedCoverArts, userTopTracks]);
+  
   // set songs
   useEffect(() => {
     if (userTopTracks) {
@@ -242,8 +233,23 @@ function App() {
         return item.preview_url != null;
       });
 
-      filteredTracks.forEach((item, index) => {
-        console.log(item.url);
+      filteredTracks.slice(0, 10).forEach((item, index) => {
+        var artwork_url = item.album.images[0].url;
+        if (artwork_url != null) {
+          // retrieve artwork from spotify api
+          // find most prominent color
+          var img = new Image();
+          img.crossOrigin = "Anonymous";
+          img.src = artwork_url;
+          
+          img.onload = () => {
+            setLoadedCoverArts((prevLoadedCoverArts) => [
+              ...prevLoadedCoverArts,
+              [index, img],
+            ]);
+          }
+
+        }
         newSongs.push({
           name: item.name,
           album: item.album.name,
@@ -258,10 +264,9 @@ function App() {
         });
       });
       //setTopSongs(newSongs);
-      setSongs(newSongs.slice(0, 10));  
-      console.log({newSongs});
+      setSongs(newSongs);
+      console.log({ newSongs });
     }
-
   }, [userTopTracks]);
 
   const handleScroll = (event) => {
@@ -410,17 +415,25 @@ function App() {
   return (
     <div id="App" onWheel={handleScroll}>
       <div className="menu">
-        {
-          !isSignedIn ?
+        {!isSignedIn ? (
           <a className="login_btn" href="/login">
-            <img src={spotifyLogo} alt="Spotify Logo" className="spotify_logo" />
+            <img
+              src={spotifyLogo}
+              alt="Spotify Logo"
+              className="spotify_logo"
+            />
             <span>Login with Spotify</span>
-          </a> : 
+          </a>
+        ) : (
           <a className="login_btn" href="/app">
-            <img src={spotifyLogo} alt="Spotify Logo" className="spotify_logo" />
+            <img
+              src={spotifyLogo}
+              alt="Spotify Logo"
+              className="spotify_logo"
+            />
             <span>Logout</span>
           </a>
-        }
+        )}
       </div>
       <div className="info" id="info_panel">
         <h1>Spotify Cassettes</h1>
@@ -432,11 +445,18 @@ function App() {
             transition: "opacity 0.5s ease-in-out",
           }}
         >
-          <h2>{songs[currentItemId]?.name}</h2>
-          <h3>
-            {songs[currentItemId]?.album} {currentItemId ? "-" : ""}{" "}
-            {songs[currentItemId]?.artist}
-          </h3>
+          <div className="song_info_display">
+            <div className="song_info_image">
+              <img src={songs[currentItemId]?.image} alt="Album Artwork" />
+            </div>
+            <div className="song_info_texts">
+              <h2>{songs[currentItemId]?.name}</h2>
+              <h3>
+                {songs[currentItemId]?.album} {currentItemId ? "-" : ""}{" "}
+                {songs[currentItemId]?.artist}
+              </h3>
+            </div>
+          </div>
         </div>
         <br></br>
         <br></br>

@@ -6,6 +6,14 @@ import fetch from 'node-fetch';
 import request from 'request';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+// args for express server for debugging
+
+var args = process.argv.slice(2);
+
+var debug = args[0] === '-d' || args[0] === '--debug';
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -36,8 +44,9 @@ function generateRandomString(length) {
 
 app.get('/app', function (req, res) {
     var access_token = req.query.access_token;
-    console.log(access_token);
-
+    if (debug){
+        console.log(access_token);
+    }
     //if (access_token) {
         // React app opens up with access token
     res.sendFile(path.resolve(__dirname, '../build', 'index.html'));

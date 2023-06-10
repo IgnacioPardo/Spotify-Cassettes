@@ -1,19 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import tdkLogo  from './icons/tdk.svg'
 
+const Color2RGB = (color) => {
+  return `rgb(${color[0]}, ${color[1]}, ${color[2]})`
+}
+
 const Cassette = (props) => {
 
+  var song = props.song;
+
+  console.log(song.pallette)
+
   const [isPlaying, setIsPlaying] = useState(false)
+  const [playerPlaying, setPlayerPlaying] = useState(false)
+
   const [hover, setHover] = useState(false)
 
   var reel_speed = 1;
-  var shift = props.id - 1 + props.shift;
+  var shift = song.id - 1 + props.shift;
 
   useEffect(() => {
     if (isPlaying) {
-        props.setCurrentItemId(props.id)
+        //console.log(document.querySelector(`#Cassette_${song.id}`))
+        //console.log(props.currentItemId)
+        props.setCurrentItemId(song.id)
     } else {
-        if (props.currentItemId === props.id) {
+        if (props.currentItemId === song.id) {
             props.setCurrentItemId(null)
         }
         else if (props.currentItemId != null) {
@@ -23,17 +35,19 @@ const Cassette = (props) => {
   }, [isPlaying, props])
 
   useEffect(() => {
-    if (props.currentItemId === props.id) {
+    if (props.currentItemId === song.id) {
         setIsPlaying(true)
+        setPlayerPlaying(true)
     }
     else {
+        setPlayerPlaying(props.currentItemId != null)
         setIsPlaying(false)
     }
   }, [props.currentItemId, props])
 
   useEffect(() => {
     if (hover) {
-      document.body.style.backgroundColor = props.bg_color;
+      document.body.style.backgroundColor = song.bg_color;
     }
   }, [hover, props])
 
@@ -43,7 +57,11 @@ const Cassette = (props) => {
           className={["cassette", isPlaying ? "playing" : ""].join(" ")}
           style={{ 
             transform: `translate3d(${(shift * -100)}px, ${(shift*10)}px, 0)`,
-            transition: "transform 0.2s ease-in-out"
+            transition: "transform 0.2s ease-in-out",
+            //filter: playerPlaying ? isPlaying || hover ? "none" : "blur(4px)" : "none",
+            //zIndex: props.shift + 1,
+            //zIndex: isPlaying ? 100 : 0,
+            //opacity: playerPlaying ? isPlaying ? 1 : 0.5 : 1,
         }}
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
@@ -54,7 +72,9 @@ const Cassette = (props) => {
               props.setFullscreen(true);
             }
           }}
-          id={"Cassette_" + props.id}
+          id={"Cassette_" + song.id}
+          aria-label={song.name}
+          aria-checked={isPlaying}
       >
         <div className="shadow-scene">
           <div 
@@ -85,12 +105,13 @@ const Cassette = (props) => {
             <div className="case-scene">
               <div className="ft face">
                 <div className="full-mask">
+
                   <div className="cassette_face_info">
                     <span>
-                      {props.title}
+                      {song.name}
                       <br />
                       <span className="song_artist_album">
-                        {props.artist} {props.album ? "-" : ""} {props.album}
+                        {song.artist} {props.album ? "-" : ""} {props.album}
                       </span>
                     </span>
 
@@ -110,7 +131,17 @@ const Cassette = (props) => {
                 </div>
               </div>
               <div className="bk face"></div>
-              <div className="rt face"></div>
+              <div className="rt face">
+                {
+                  song.pallette ?
+                    <div className="color_dots">
+                      <div className="color_dot dot0" style={{ backgroundColor: Color2RGB(song.pallette[0]) }}></div>
+                      <div className="color_dot dot1" style={{ backgroundColor: Color2RGB(song.pallette[1]) }}></div>
+                      <div className="color_dot dot2" style={{ backgroundColor: Color2RGB(song.pallette[2]) }}></div>
+                    </div>
+                    : <></>
+                }
+              </div>
               <div className="lt face"></div>
               <div className="tp face"></div>
               <div className="bm face"></div>
@@ -120,7 +151,7 @@ const Cassette = (props) => {
               <div className="reel-shape cylinder-2 cyl-2"
                 style={{ 
                     animation: (isPlaying || hover) ? `spin ${reel_speed}s linear infinite` : "unset",
-                    backgroundColor: props.bg_color
+                    backgroundColor: song.bg_color
                 }}
               >
                 <div className="reel-face bm">
@@ -345,15 +376,11 @@ const CassetteGallery = (props) => {
       {
         props.songs.map((song, index) => {
           return <Cassette 
-                    title={song.name} 
-                    artist={song.artist} 
-                    album={song.album}
-                    bg_color={song.bg_color} 
-                    id={song.id} 
+                    song={song}
+                  
                     key={index} 
                     setCurrentItemId={props.setCurrentItemId}
                     currentItemId={props.currentItemId}
-                    songUrl={song.url}
                     shift={props.shift}
                     isFullscreen={props.isFullscreen}
                     setFullscreen={props.setFullscreen}

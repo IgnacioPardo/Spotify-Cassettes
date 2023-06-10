@@ -23,6 +23,46 @@ body {
   justify-content: center;
   align-items: center; }
 
+.rt .face {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px; }
+
+.color_dots {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  position: absolute;
+  top: 29px; }
+
+.color_dot {
+  border-radius: 50%;
+  height: 8px;
+  width: 8px; }
+
+.song_info_display {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  gap: 20px;
+  height: 60px; }
+
+.song_info_image {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row; }
+  .song_info_image img {
+    height: 100%;
+    border-radius: 1px; }
+
 .menu {
   width: 100vw;
   height: auto;
