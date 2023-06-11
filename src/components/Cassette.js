@@ -10,6 +10,21 @@ import ColorThief from 'colorthief';
 import { sortColorsByLuma, Color2RGB, noteByKey } from "../utils.js";
 
 
+const brandLogos = [tdkLogo, sonyLogo, maxellLogo, basfLogo];
+
+const BrandLogoByFeatures = (features) => {
+  var acousticness = features.acousticness;
+  var energy = features.energy;
+  var danceability = features.danceability;
+
+  var value = ((acousticness + energy + danceability) * 100) % 4;
+  return brandLogos[Math.floor(value)];
+}
+
+const BrandLogoByID = (id) => {
+  return brandLogos[id % 4];
+}
+
 export const Cassette = (props) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playerPlaying, setPlayerPlaying] = useState(false);
@@ -215,7 +230,11 @@ export const Cassette = (props) => {
 
                     {/* <tdkLogo /> */}
                     <img
-                      src={tdkLogo}
+                      src={
+                        song.audio_features ? 
+                          BrandLogoByFeatures(song.audio_features) : 
+                          BrandLogoByID(song.id)
+                      }
                       alt="TDK Logo"
                       width="60"
                       height="60"

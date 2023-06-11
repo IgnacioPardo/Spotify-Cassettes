@@ -14,7 +14,12 @@ import forwardSound from "./components/sounds/fforward.mp3";
 
 import spotifyLogo from "./components/icons/spotify.svg";
 
-import { fetchTopTracks, fetchTopArtists, fetchUserData, fetchTracksAudioFeatures } from "./spotify.js";
+import {
+  fetchTopTracks,
+  fetchTopArtists,
+  fetchUserData,
+  fetchTracksAudioFeatures,
+} from "./spotify.js";
 // import { fetchTopTracksRateLimited, fetchTopArtistsRateLimited, fetchUserDataRateLimited, fetchTracksAudioFeaturesRateLimited } from "./spotify.js";
 
 import defaultSongs from "./defaultSongs.js";
@@ -26,7 +31,6 @@ import { sortColorsByLuma } from "./utils.js";
 //   fetchTopArtists = fetchTopArtistsRateLimited,
 //   fetchUserData = fetchUserDataRateLimited,
 //   fetchTracksAudioFeatures = fetchTracksAudioFeaturesRateLimited;
-
 
 const PlayerIcon = ({ name }) => {
   // Player icons
@@ -49,7 +53,10 @@ const TimeRangeSelector = ({ setRange, timeRange }) => {
     <>
       <div className="time_range_selector switch-field">
         <input
-          type="radio" id="short_term" name="time_range" value="short_term"
+          type="radio"
+          id="short_term"
+          name="time_range"
+          value="short_term"
           checked={timeRange === "short_term"}
           onChange={() => setRange("short_term")}
         />
@@ -73,7 +80,8 @@ const TimeRangeSelector = ({ setRange, timeRange }) => {
         />
         <label htmlFor="long_term">All Time</label>
       </div>
-    </>);
+    </>
+  );
 };
 
 const PlayerControls = ({ setControlAction }) => {
@@ -150,10 +158,12 @@ function handleAccessTokenError(err) {
     //let refresh_token = searchParams.get("refresh_token");
     //console.log("refresh_token", refresh_token);
     //window.location.redirect(`/refresh_token?refresh_token=${refresh_token}`);
-    window.location.href = "/app";
+    // window.location.href = "/app?expired=true&refresh_token=${refresh_token}";
+
+    alert("Your session has expired. Please log in again.");
+    window.location.href = "/login";
   }
 }
-
 
 function App() {
   const [currentItemId, setCurrentItemId] = useState(null);
@@ -187,11 +197,20 @@ function App() {
     if (searchParams.has("access_token")) {
       var accessToken = searchParams.get("access_token");
       console.log(accessToken);
-      
-      fetchUserData(accessToken, setUserData, handleAccessTokenError, () => {});
-      fetchTopArtists(accessToken, setUserTopArtists, handleAccessTokenError, timeRange);
-      fetchTopTracks(accessToken, setUserTopTracks, handleAccessTokenError, timeRange);
 
+      fetchUserData(accessToken, setUserData, handleAccessTokenError, () => {});
+      fetchTopArtists(
+        accessToken,
+        setUserTopArtists,
+        handleAccessTokenError,
+        timeRange
+      );
+      fetchTopTracks(
+        accessToken,
+        setUserTopTracks,
+        handleAccessTokenError,
+        timeRange
+      );
     } else {
       console.log("No access token");
     }
@@ -200,7 +219,12 @@ function App() {
   useEffect(() => {
     if (searchParams.has("access_token")) {
       var accessToken = searchParams.get("access_token");
-      fetchTopTracks(accessToken, setUserTopTracks, handleAccessTokenError, timeRange);
+      fetchTopTracks(
+        accessToken,
+        setUserTopTracks,
+        handleAccessTokenError,
+        timeRange
+      );
     }
   }, [timeRange]);
 
@@ -274,7 +298,7 @@ function App() {
       setIsLoadingAudioFeatures(false);
     }
   }, [loadedAudioFeatures, userTopTracks]); */
-  
+
   // set songs
   useEffect(() => {
     if (userTopTracks) {
@@ -294,7 +318,7 @@ function App() {
         //   var img = new Image();
         //   img.crossOrigin = "Anonymous";
         //   img.src = artwork_url;
-          
+
         //   setIsLoadingCoverArts(true);
 
         //   img.onload = () => {
@@ -304,7 +328,7 @@ function App() {
         //     ]);
         //   }
         // }
-        
+
         // if (searchParams.has("access_token")) {
         //   var accessToken = searchParams.get("access_token");
         //   console.log("fetching audio features");
@@ -495,7 +519,7 @@ function App() {
     <div id="App" onWheel={handleScroll}>
       <div className="menu">
         {isSignedIn ? (
-          <>            
+          <>
             <TimeRangeSelector setRange={setTimeRange} timeRange={timeRange} />
             <div className="user_info">
               <img
@@ -503,36 +527,37 @@ function App() {
                 alt="{userData.display_name}'s Profile Picture"
                 className="user_profile_pic"
               />
-              <a className="logout_btn spotify_btn" href="/app"><img
-                src={spotifyLogo}
-                alt="Spotify Logo"
-                className="spotify_logo"
-              />
+              <a className="logout_btn spotify_btn" href="/app">
+                <img
+                  src={spotifyLogo}
+                  alt="Spotify Logo"
+                  className="spotify_logo"
+                />
                 <span>Logout</span>
               </a>
             </div>
           </>
         ) : (
           <>
-          <a className="login_btn spotify_btn" href="/login">
-            <img
-              src={spotifyLogo}
-              alt="Spotify Logo"
-              className="spotify_logo"
-            />
-            <span>Login with Spotify</span>
-          </a>
+            <a className="login_btn spotify_btn" href="/login">
+              <img
+                src={spotifyLogo}
+                alt="Spotify Logo"
+                className="spotify_logo"
+              />
+              <span>Login with Spotify</span>
+            </a>
           </>
         )}
       </div>
       <div className="info" id="info_panel">
-        {
-          userData?.display_name ? (
-            <h1 className="user_name">{userData.display_name}'s <b>Spotify Cassettes</b></h1>
-          ) : (
-            <h1 className="user_name">Spotify Cassettes</h1>
-          )
-        }
+        {userData?.display_name ? (
+          <h1 className="user_name">
+            {userData.display_name}'s <b>Spotify Cassettes 📼</b>
+          </h1>
+        ) : (
+          <h1 className="user_name">Spotify Cassettes 📼</h1>
+        )}
         <br></br>
         <div
           className="song_info"
@@ -542,12 +567,13 @@ function App() {
           }}
         >
           <div className="song_info_display">
-            {
-              currentSong?.image ?
+            {currentSong?.image ? (
               <div className="song_info_image">
                 <img src={currentSong?.image} alt="Album Artwork" />
-              </div> : <></>
-            }
+              </div>
+            ) : (
+              <></>
+            )}
             <div className="song_info_texts">
               <h2>{currentSong?.name}</h2>
               <h3>
