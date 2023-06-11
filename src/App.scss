@@ -278,6 +278,15 @@ a {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  .song_text{
+    // display: flex;
+    // width: 50% !important;
+    // overflow: hidden;
+    // white-space: nowrap;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
+  }
 }
 
 .song_artist_album{

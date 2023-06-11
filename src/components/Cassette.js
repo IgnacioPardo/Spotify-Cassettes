@@ -74,7 +74,7 @@ export const Cassette = (props) => {
             setIsTranslucent(true);
             setIsWhite(false);
           }
-          else if (inst > 0.2) {
+          else if (inst > 0.3) {
             setIsSpotifyGreen(false);
             setIsTranslucent(false);
             setIsWhite(true);
@@ -249,12 +249,12 @@ export const Cassette = (props) => {
                       }
                     </span>
 
-                    <span>
+                    <span className="song_name song_text">
                       {song.name}
-                      <br />
-                      <span className="song_artist_album">
-                        {song.artist} {props.album ? "-" : ""} {props.album}
-                      </span>
+                    </span>
+                    <br />
+                    <span className="song_artist_album song_text">
+                      {song.artist} {props.album ? "-" : ""} {props.album}
                     </span>
 
                     <br />

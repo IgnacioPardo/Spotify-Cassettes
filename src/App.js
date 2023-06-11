@@ -528,7 +528,7 @@ function App() {
         currentItemId={currentItemId}
         style={{
           transform:
-            currentItemId !== null ? "translateY(440px)" : "translateY(340px)",
+            currentItemId !== null ? "translateY(500px)" : "translateY(340px)",
           transition: "transform 0.5s ease-in-out",
         }}
         shift={scrollShift}
@@ -547,6 +547,38 @@ function App() {
         }}
         preload="auto"
       />
+
+      {
+        isSignedIn ? (
+          <button className="download_json_btn" 
+            onClick= {(e) => {
+              e.preventDefault();
+              const element = document.createElement("a");
+              const file = new Blob([JSON.stringify(songs)], {type: 'text/plain'});
+              element.href = URL.createObjectURL(file);
+              element.download = "cassettes.json";
+              document.body.appendChild(element); // Required for this to work in FireFox
+              element.click();
+            }}
+            style={{
+              position: "absolute",
+              bottom: "20px",
+              right: "20px",
+              zIndex: "100",
+              fontFamily: "SF Pro Display",
+              fontSize: "20px",
+              fontWeight: "bold",
+              color: "white",
+              backgroundColor: "black",
+              borderRadius: "50%",
+              width: "50px",
+              height: "50px",
+              border: "none",
+              outline: "none",
+              cursor: "pointer",
+            }}
+          >􀈅</button>) : <></>
+      }
     </div>
   );
 }
