@@ -183,12 +183,7 @@ function App() {
 
   const [songs, setSongs] = useState(defaultSongs);
 
-  const [loadedCoverArts, setLoadedCoverArts] = useState([]);
-  const [loadedAudioFeatures, setLoadedAudioFeatures] = useState([]);
   const [timeRange, setTimeRange] = useState("short_term");
-
-  const [isLoadingCoverArts, setIsLoadingCoverArts] = useState(false);
-  const [isLoadingAudioFeatures, setIsLoadingAudioFeatures] = useState(false);
 
   var searchParams = new URLSearchParams(window.location.search);
 
@@ -217,6 +212,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    setControlAction("stop");
     if (searchParams.has("access_token")) {
       var accessToken = searchParams.get("access_token");
       fetchTopTracks(
@@ -229,13 +225,6 @@ function App() {
   }, [timeRange]);
 
   useEffect(() => {
-    // if (songs && loadedCoverArts && loadedAudioFeatures){
-    //   setCurrentSong(null);
-    //   setCurrentItemId(null);
-    // }
-  }, [songs, loadedCoverArts, loadedAudioFeatures]);
-
-  useEffect(() => {
     if (userTopTracks && userTopArtists && userData) {
       setIsSignedIn(true);
       console.log({
@@ -245,59 +234,6 @@ function App() {
       });
     }
   }, [userTopArtists, userTopTracks, userData]);
-
-  /* useEffect(() => {
-    if (userTopTracks && loadedCoverArts.length == songs.length) {
-      // console.log({ loadedCoverArts });
-      var coloredSongs = [];
-
-      loadedCoverArts.forEach((item) => {
-        var colorThief = new ColorThief();
-        // var dominantColor = colorThief.getColor(item[1]);
-        var pallette = colorThief.getPalette(item[1], 3);
-        //console.log({ sortedColorsByLuma: sortColorsByLuma(pallete) });
-        var dominantColor = sortColorsByLuma(pallette)[0];
-        var rgb = `rgb(${dominantColor[0]}, ${dominantColor[1]}, ${dominantColor[2]})`;
-        
-        //console.log({rgb});
-        //console.log({item});
-
-        var song = songs.find((song) => {
-          return song.id == item[0];
-        });
-
-        song.bg_color = rgb;
-        song.pallette = colorThief.getPalette(item[1], 5);
-        // console.log({song});
-        coloredSongs.push(song);
-      });
-
-      // console.log({coloredSongs});
-      setSongs(coloredSongs);
-      setIsLoadingCoverArts(false);
-    }
-  }, [loadedCoverArts, userTopTracks]); */
-
-  /* useEffect(() => {
-    if (userTopTracks && loadedAudioFeatures.length == songs.length) {
-      // console.log({ loadedAudioFeatures });
-      var audioFeatures = [];
-
-      loadedAudioFeatures.forEach((item) => {
-        var song = songs.find((song) => {
-          return song.spotify_id == item[0];
-        });
-        console.log({song, item});
-        song.audio_features = item[1]
-        audioFeatures.push(song);
-      });
-
-      // console.log({audioFeatures});
-
-      setSongs(audioFeatures);
-      setIsLoadingAudioFeatures(false);
-    }
-  }, [loadedAudioFeatures, userTopTracks]); */
 
   // set songs
   useEffect(() => {
@@ -310,40 +246,6 @@ function App() {
       });
 
       filteredTracks.slice(0, 10).forEach((item, index) => {
-        // var artwork_url = item.album.images[0].url;
-        // if (artwork_url != null) {
-        //   // retrieve artwork from spotify api
-        //   // find most dominant color
-
-        //   var img = new Image();
-        //   img.crossOrigin = "Anonymous";
-        //   img.src = artwork_url;
-
-        //   setIsLoadingCoverArts(true);
-
-        //   img.onload = () => {
-        //     setLoadedCoverArts((prevLoadedCoverArts) => [
-        //       ...prevLoadedCoverArts,
-        //       [index, img],
-        //     ]);
-        //   }
-        // }
-
-        // if (searchParams.has("access_token")) {
-        //   var accessToken = searchParams.get("access_token");
-        //   console.log("fetching audio features");
-
-        //   setIsLoadingAudioFeatures(true);
-
-        //   fetchTracksAudioFeatures(accessToken, [item.id], (trackAudioFeatures) => {
-        //     setLoadedAudioFeatures((prevLoadedAudioFeatures) => [
-        //       ...prevLoadedAudioFeatures,
-        //       [item.id, trackAudioFeatures.audio_features[0]],
-        //     ]);
-        //     console.log({trackAudioFeatures});
-        //   });
-        // }
-
         newSongs.push({
           name: item.name,
           album: item.album.name,
@@ -358,16 +260,15 @@ function App() {
           image: item.album.images[0].url,
         });
       });
-      //setTopSongs(newSongs);
-      // console.log({ newSongs });
       setSongs(newSongs);
     }
   }, [userTopTracks]);
 
   const handleScroll = (event) => {
     // Handle scroll event
-
-    setScrollShift(scrollShift + event.deltaY * 0.1);
+    setScrollShift(Math.min(0, Math.max(-16, scrollShift + event.deltaY * 0.1)));
+      //scrollShift + event.deltaY * 0.1);
+    console.log(scrollShift);
   };
 
   function playSound(sound) {

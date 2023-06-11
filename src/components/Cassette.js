@@ -35,7 +35,12 @@ export const Cassette = (props) => {
 
   const [reel_speed, setReelSpeed] = useState(1);
   const [songKey, setSongKey] = useState("");
+  
+  const [isTranslucent, setIsTranslucent] = useState(false);
+  const [isWhite, setIsWhite] = useState(false);
+  const [isSpotifyGreen, setIsSpotifyGreen] = useState(false);
 
+  
   var shift = song.id - 1 + props.shift;
 
   useEffect(() => {
@@ -49,13 +54,37 @@ export const Cassette = (props) => {
           var song_update = props.songs[props.songId];
           song_update.audio_features = trackAudioFeatures.audio_features[0];
           
-          console.log((100 / song.audio_features.tempo) * 2);
-          console.log(noteByKey(song.audio_features.key));
+          // console.log((100 / song.audio_features.tempo) * 2);
+          // console.log(noteByKey(song.audio_features.key));
 
           setReelSpeed((100 / song.audio_features.tempo) * 2);
           setSongKey(noteByKey(song.audio_features.key));
           song_update.reel_speed = (100 / song.audio_features.tempo) * 2;
           song_update.key = noteByKey(song.audio_features.key);
+
+          var inst = song.audio_features.instrumentalness;
+          
+          if (inst > 0.9){
+            setIsSpotifyGreen(true);
+            setIsTranslucent(false);
+            setIsWhite(true);
+          }
+          else if (inst > 0.65) {
+            setIsSpotifyGreen(false);
+            setIsTranslucent(true);
+            setIsWhite(false);
+          }
+          else if (inst > 0.2) {
+            setIsSpotifyGreen(false);
+            setIsTranslucent(false);
+            setIsWhite(true);
+          }
+          else {
+            setIsSpotifyGreen(false);
+            setIsTranslucent(false);
+            setIsWhite(false);
+          }
+
           setSong(song_update);
         });
       }
@@ -162,7 +191,10 @@ export const Cassette = (props) => {
         </div>
 
         <div
-          className="cassette-scene"
+          className={["cassette-scene", 
+                      isSpotifyGreen  ? "spotify-cassette" : "", 
+                      isTranslucent   ? "translucent-cassette" : "", 
+                      isWhite         ? "white-cassette" : ""].join(" ")}
           style={{
             transform: isPlaying
               ? `perspective(10000px) rotateX(85deg) rotateZ(390deg) translateZ(24vw) rotateY(0deg) scale3d(1.4, 1.4, 1.4)`
@@ -262,6 +294,18 @@ export const Cassette = (props) => {
                   ) : (
                     <></>
                   )}
+                  <span className="song_number" 
+                    style={{ 
+                      // backgroundColor: song.bg_color,
+                      color: isWhite ? "black" : "white",
+                      marginTop: "20px",
+                      fontSize: "20px",
+                      fontWeight: "bold",
+                      fontFamily: "monospace",
+                    }}
+                  >
+                    {props.songId + 1}
+                  </span>
                 </div>
               </div>
               <div className="lt face"></div>

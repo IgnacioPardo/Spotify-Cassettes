@@ -810,4 +810,94 @@ a {
       .cassette-shape .reel-scene .cyl-2 .s19 {
         transform: rotateY(351deg) translate3D(-50%, 0, 1.475vw); }
 
+.white-cassette .cassette-shape .case-scene .bk {
+  background-color: #b0b0b0 !important; }
+.white-cassette .cassette-shape .case-scene .lt {
+  background-color: #8a8a8a !important;
+  border-right: 0.125vw solid #8c8a8a !important; }
+.white-cassette .cassette-shape .case-scene .rt {
+  background-color: #8a8a8a !important;
+  border-left: 0.125vw solid #8c8a8a !important; }
+.white-cassette .cassette-shape .case-scene .tp {
+  background-color: #a4a4a4 !important;
+  border-bottom: 0.125vw solid #8c8a8a !important; }
+.white-cassette .cassette-shape .case-scene .bm {
+  background-color: #8c8c8c !important; }
+.white-cassette .cassette-shape .case-scene .ft .full-mask {
+  background-color: #cccccc !important; }
+.white-cassette .cassette-shape .cover-scene .cover-shape .cover-face {
+  background-color: #c3c3c3 !important; }
+.white-cassette .cassette-shape .cover-scene .cover-shape.pri-2 .ft {
+  background-color: #aaaaaa !important; }
+.white-cassette .cassette-shape .cover-scene .cover-shape.pri-1 .ft {
+  background-color: #aaaaaa !important; }
+.white-cassette .cassette-shape .cover-scene .cover-shape.pri-1 .bm {
+  background-color: #6d6d6d !important; }
+.white-cassette .cassette-shape .cover-scene .cover-shape.pri-2 .bm {
+  background-color: #6d6d6d !important; }
+.white-cassette .cassette-shape .cover-scene .cover-shape.cub-1 .bm {
+  background-color: #919191 !important; }
+.white-cassette .cassette-shape .cover-scene .cover-shape.cub-1 .tp {
+  background-color: #b6b6b6 !important; }
+
+.translucent-cassette .cassette-shape .case-scene .bk {
+  background-color: rgba(100, 100, 110, 0.6) !important; }
+.translucent-cassette .cassette-shape .case-scene .lt {
+  background-color: rgba(70, 70, 80, 0.6) !important;
+  border-right: 0.125vw solid rgba(70, 70, 80, 0.6) !important; }
+.translucent-cassette .cassette-shape .case-scene .rt {
+  background-color: rgba(70, 70, 80, 0.6) !important;
+  border-left: 0.125vw solid rgba(70, 70, 80, 0.6) !important; }
+.translucent-cassette .cassette-shape .case-scene .tp {
+  background-color: rgba(80, 80, 90, 0.6) !important;
+  border-bottom: 0.125vw solid rgba(70, 70, 80, 0.6) !important; }
+.translucent-cassette .cassette-shape .case-scene .bm {
+  background-color: rgba(75, 75, 85, 0.6) !important; }
+.translucent-cassette .cassette-shape .case-scene .ft .full-mask {
+  background-color: rgba(110, 110, 120, 0.6) !important; }
+.translucent-cassette .cassette-shape .cover-scene .cover-shape .cover-face {
+  background-color: rgba(115, 115, 125, 0.6) !important; }
+.translucent-cassette .cassette-shape .cover-scene .cover-shape.pri-2 .ft {
+  background-color: rgba(120, 120, 130, 0.6) !important; }
+.translucent-cassette .cassette-shape .cover-scene .cover-shape.pri-1 .ft {
+  background-color: rgba(120, 120, 130, 0.6) !important; }
+.translucent-cassette .cassette-shape .cover-scene .cover-shape.pri-1 .bm {
+  background-color: rgba(70, 70, 80, 0.6) !important; }
+.translucent-cassette .cassette-shape .cover-scene .cover-shape.pri-2 .bm {
+  background-color: rgba(70, 70, 80, 0.6) !important; }
+.translucent-cassette .cassette-shape .cover-scene .cover-shape.cub-1 .bm {
+  background-color: rgba(75, 75, 85, 0.6) !important; }
+.translucent-cassette .cassette-shape .cover-scene .cover-shape.cub-1 .tp {
+  background-color: rgba(100, 100, 110, 0.6) !important; }
+
+.spotify-cassette .cassette-shape .case-scene .bk {
+  background-color: #158d41 !important; }
+.spotify-cassette .cassette-shape .case-scene .lt {
+  background-color: #0f602c !important;
+  border-right: 0.125vw solid #0f602c !important; }
+.spotify-cassette .cassette-shape .case-scene .rt {
+  background-color: #0f602c !important;
+  border-left: 0.125vw solid #0f602c !important; }
+.spotify-cassette .cassette-shape .case-scene .tp {
+  background-color: #127736 !important;
+  border-bottom: 0.125vw solid #0f602c !important; }
+.spotify-cassette .cassette-shape .case-scene .bm {
+  background-color: #0f602c !important; }
+.spotify-cassette .cassette-shape .case-scene .ft .full-mask {
+  background-color: #158d41 !important; }
+.spotify-cassette .cassette-shape .cover-scene .cover-shape .cover-face {
+  background-color: #158d41 !important; }
+.spotify-cassette .cassette-shape .cover-scene .cover-shape.pri-2 .ft {
+  background-color: #0f602c !important; }
+.spotify-cassette .cassette-shape .cover-scene .cover-shape.pri-1 .ft {
+  background-color: #0f602c !important; }
+.spotify-cassette .cassette-shape .cover-scene .cover-shape.pri-1 .bm {
+  background-color: #0f602c !important; }
+.spotify-cassette .cassette-shape .cover-scene .cover-shape.pri-2 .bm {
+  background-color: #0f602c !important; }
+.spotify-cassette .cassette-shape .cover-scene .cover-shape.cub-1 .bm {
+  background-color: #0f602c !important; }
+.spotify-cassette .cassette-shape .cover-scene .cover-shape.cub-1 .tp {
+  background-color: #127736 !important; }
+
 /*# sourceMappingURL=App.css.map */
