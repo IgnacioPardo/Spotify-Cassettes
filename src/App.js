@@ -20,17 +20,25 @@ import {
   fetchUserData,
   fetchTracksAudioFeatures,
 } from "./spotify.js";
-// import { fetchTopTracksRateLimited, fetchTopArtistsRateLimited, fetchUserDataRateLimited, fetchTracksAudioFeaturesRateLimited } from "./spotify.js";
 
-import defaultSongs from "./defaultSongs.js";
+import defaultSongs from "./cassettes.json";
 
-// import ColorThief from 'colorthief';
-import { sortColorsByLuma } from "./utils.js";
+/*
+import chonaCassettes from './cassettes_chona.json';
+import lucaCassettes from './cassettes_luca.json';
+import gesaCassttes from './cassettes_gesa.json';
 
-// const fetchTopTracks = fetchTopTracksRateLimited,
-//   fetchTopArtists = fetchTopArtistsRateLimited,
-//   fetchUserData = fetchUserDataRateLimited,
-//   fetchTracksAudioFeatures = fetchTracksAudioFeaturesRateLimited;
+// merge all cassettes into one array of length 10
+const cassettes = chonaCassettes.slice(0, 4).concat(lucaCassettes.slice(0, 3)).concat(gesaCassttes.slice(0, 3)).map((cassette, index) => {
+  cassette.id = index;
+  return cassette;
+});
+*/
+
+var last = JSON.parse(JSON.stringify(defaultSongs.at(-1)));
+defaultSongs.push(last);
+defaultSongs.at(-1).id = defaultSongs.length - 1;
+console.log(defaultSongs);
 
 const PlayerIcon = ({ name }) => {
   // Player icons
@@ -238,19 +246,17 @@ function App() {
   // set songs
   useEffect(() => {
     if (userTopTracks) {
-      var searchParams = new URLSearchParams(window.location.search);
       let newSongs = [];
-
       let filteredTracks = userTopTracks.items.filter((item) => {
         return item.preview_url != null;
       });
 
-      filteredTracks.slice(0, 10).forEach((item, index) => {
+      filteredTracks.slice(0, 11).forEach((item, index) => {
         newSongs.push({
           name: item.name,
           album: item.album.name,
           artwork: item.album.images[0].url,
-          artist: item.artists[0].name,
+          artist: item.artists.map((artist) => artist.name).join(", "),
           bg_color: colors[index % colors.length],
           url: item.preview_url,
           id: index,
@@ -266,9 +272,11 @@ function App() {
 
   const handleScroll = (event) => {
     // Handle scroll event
-    setScrollShift(Math.min(0, Math.max(-16, scrollShift + event.deltaY * 0.1)));
-      //scrollShift + event.deltaY * 0.1);
-    console.log(scrollShift);
+    setScrollShift(
+      Math.min(0, Math.max(-16, scrollShift + event.deltaY * 0.1))
+    );
+    //scrollShift + event.deltaY * 0.1);
+    // console.log(scrollShift);
   };
 
   function playSound(sound) {
@@ -548,37 +556,43 @@ function App() {
         preload="auto"
       />
 
-      {
-        isSignedIn ? (
-          <button className="download_json_btn" 
-            onClick= {(e) => {
-              e.preventDefault();
-              const element = document.createElement("a");
-              const file = new Blob([JSON.stringify(songs)], {type: 'text/plain'});
-              element.href = URL.createObjectURL(file);
-              element.download = "cassettes.json";
-              document.body.appendChild(element); // Required for this to work in FireFox
-              element.click();
-            }}
-            style={{
-              position: "absolute",
-              bottom: "20px",
-              right: "20px",
-              zIndex: "100",
-              fontFamily: "SF Pro Display",
-              fontSize: "20px",
-              fontWeight: "bold",
-              color: "white",
-              backgroundColor: "black",
-              borderRadius: "50%",
-              width: "50px",
-              height: "50px",
-              border: "none",
-              outline: "none",
-              cursor: "pointer",
-            }}
-          >􀈅</button>) : <></>
-      }
+      {isSignedIn ? (
+        <button
+          className="download_json_btn"
+          onClick={(e) => {
+            e.preventDefault();
+            const element = document.createElement("a");
+            const file = new Blob([JSON.stringify(songs)], {
+              type: "text/plain",
+            });
+            element.href = URL.createObjectURL(file);
+            element.download = "cassettes.json";
+            document.body.appendChild(element); // Required for this to work in FireFox
+            element.click();
+          }}
+          style={{
+            position: "absolute",
+            bottom: "20px",
+            right: "20px",
+            zIndex: "100",
+            fontFamily: "SF Pro Display",
+            fontSize: "20px",
+            fontWeight: "bold",
+            color: "white",
+            backgroundColor: "black",
+            borderRadius: "50%",
+            width: "50px",
+            height: "50px",
+            border: "none",
+            outline: "none",
+            cursor: "pointer",
+          }}
+        >
+          􀈅
+        </button>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

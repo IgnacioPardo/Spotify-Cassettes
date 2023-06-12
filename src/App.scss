@@ -32,6 +32,13 @@ body {
   transition: 0.2s ease;
 }
 
+#Cassette_10{
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  cursor: default !important;
+}
+
 .switch-field {
   display: flex;
   overflow: hidden;

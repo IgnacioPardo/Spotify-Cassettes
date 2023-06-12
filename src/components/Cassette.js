@@ -6,9 +6,8 @@ import maxellLogo from "./icons/maxell.svg";
 import basfLogo from "./icons/basf.svg";
 
 import { fetchTracksAudioFeatures } from "../spotify.js";
-import ColorThief from 'colorthief';
+import ColorThief from "colorthief";
 import { sortColorsByLuma, Color2RGB, noteByKey } from "../utils.js";
-
 
 const brandLogos = [tdkLogo, sonyLogo, maxellLogo, basfLogo];
 
@@ -19,11 +18,13 @@ const BrandLogoByFeatures = (features) => {
 
   var value = ((acousticness + energy + danceability) * 100) % 4;
   return brandLogos[Math.floor(value)];
-}
+};
 
 const BrandLogoByID = (id) => {
   return brandLogos[id % 4];
-}
+};
+
+const varToString = varObj => Object.keys(varObj)[0];
 
 export const Cassette = (props) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -35,58 +36,113 @@ export const Cassette = (props) => {
 
   const [reel_speed, setReelSpeed] = useState(1);
   const [songKey, setSongKey] = useState("");
-  
+
   const [isTranslucent, setIsTranslucent] = useState(false);
   const [isWhite, setIsWhite] = useState(false);
   const [isSpotifyGreen, setIsSpotifyGreen] = useState(false);
 
-  
+  const [shade, setShade] = useState(0);
+
   var shift = song.id - 1 + props.shift;
 
   useEffect(() => {
 
+    var shades = [];
+
+    //select all by data-shade
+    document.querySelectorAll(`[data-shade]`).forEach((el) => {
+      shades.push(el.getAttribute("data-shade"));
+    });
+
+    shades = shades.slice(0, shades.length - 1)
+
+    // if shade is quantile 0-0.25, set to translucent
+    // if shade is quantile 0.25-0.5, set to white
+    // if shade is quantile 0.5-0.9, set to black
+    // if shade is quantile 0.9-1, set to spotify green
+
+    // calculate quantiles
+
+    var shade_quantile = shades.filter((x) => x < shade).length / shades.length;
+
+    if (shade_quantile < 0.25) {
+      setIsTranslucent(true);
+      setIsWhite(false);
+      setIsSpotifyGreen(false);
+    }
+    else if (shade_quantile < 0.5) {
+      setIsTranslucent(false);
+      setIsWhite(true);
+      setIsSpotifyGreen(false);
+    }
+    else if (shade_quantile < 0.9) {
+      setIsTranslucent(false);
+      setIsWhite(false);
+      setIsSpotifyGreen(false);
+    }
+    else {
+      setIsTranslucent(false);
+      setIsWhite(false);
+      setIsSpotifyGreen(true);
+    }
+
+    console.log({
+      shade: shade,
+      shade_quantile: shade_quantile,
+      shades: shades,
+    })
+
+  }, [shade]);
+
+  useEffect(() => {
+    if (song.audio_features) {
+      setReelSpeed((100 / song.audio_features.tempo) * 2);
+      setSongKey(noteByKey(song.audio_features.key));
+
+      setShade(song.audio_features.instrumentalness + song.audio_features.speechiness);
+    }
+
+    if (song.calc_palette) {
+      setPallete(song.calc_palette);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (song.audio_features) {
+      var my_shade =
+        song.audio_features.instrumentalness + song.audio_features.speechiness;
+      console.log(my_shade);
+    }
+  }, [song]);
+
+  useEffect(() => {
     var searchParams = new URLSearchParams(window.location.search);
     // var song_update = props.songs[props.songId];
     if (searchParams.has("access_token")) {
       var accessToken = searchParams.get("access_token");
       if (song.spotify_id) {
-        fetchTracksAudioFeatures(accessToken, [song.spotify_id], (trackAudioFeatures) => {
-          var song_update = props.songs[props.songId];
-          song_update.audio_features = trackAudioFeatures.audio_features[0];
-          
-          // console.log((100 / song.audio_features.tempo) * 2);
-          // console.log(noteByKey(song.audio_features.key));
+        fetchTracksAudioFeatures(
+          accessToken,
+          [song.spotify_id],
+          (trackAudioFeatures) => {
+            var song_update = props.songs[props.songId];
+            song_update.audio_features = trackAudioFeatures.audio_features[0];
 
-          setReelSpeed((100 / song.audio_features.tempo) * 2);
-          setSongKey(noteByKey(song.audio_features.key));
-          song_update.reel_speed = (100 / song.audio_features.tempo) * 2;
-          song_update.key = noteByKey(song.audio_features.key);
+            // console.log((100 / song.audio_features.tempo) * 2);
+            // console.log(noteByKey(song.audio_features.key));
 
-          var inst = song.audio_features.instrumentalness;
-          
-          if (inst > 0.9){
-            setIsSpotifyGreen(true);
-            setIsTranslucent(false);
-            setIsWhite(true);
-          }
-          else if (inst > 0.65) {
-            setIsSpotifyGreen(false);
-            setIsTranslucent(true);
-            setIsWhite(false);
-          }
-          else if (inst > 0.3) {
-            setIsSpotifyGreen(false);
-            setIsTranslucent(false);
-            setIsWhite(true);
-          }
-          else {
-            setIsSpotifyGreen(false);
-            setIsTranslucent(false);
-            setIsWhite(false);
-          }
+            setReelSpeed((100 / song.audio_features.tempo) * 2);
+            setSongKey(noteByKey(song.audio_features.key));
+            song_update.reel_speed = (100 / song.audio_features.tempo) * 2;
+            song_update.key = noteByKey(song.audio_features.key);
 
-          setSong(song_update);
-        });
+            var my_shade =
+              song.audio_features.instrumentalness +
+              song.audio_features.speechiness;
+            
+            setShade(my_shade);
+          }
+        );
       }
       //console.log("loading image for song " + props.songs[props.songId].name);
       var img = new Image();
@@ -168,6 +224,8 @@ export const Cassette = (props) => {
         id={"Cassette_" + song.id}
         aria-label={song.name}
         aria-checked={isPlaying}
+        // add new value for shade
+        data-shade={shade}
       >
         <div className="shadow-scene">
           <div
@@ -191,14 +249,18 @@ export const Cassette = (props) => {
         </div>
 
         <div
-          className={["cassette-scene", 
-                      isSpotifyGreen  ? "spotify-cassette" : "", 
-                      isTranslucent   ? "translucent-cassette" : "", 
-                      isWhite         ? "white-cassette" : ""].join(" ")}
+          className={[
+            "cassette-scene",
+            isSpotifyGreen ? "spotify-cassette" : "",
+            isTranslucent ? "translucent-cassette" : "",
+            isWhite ? "white-cassette" : "",
+          ].join(" ")}
           style={{
             transform: isPlaying
               ? `perspective(10000px) rotateX(85deg) rotateZ(390deg) translateZ(24vw) rotateY(0deg) scale3d(1.4, 1.4, 1.4)`
-              : `perspective(10000px) rotateX(80deg) rotateZ(40deg) translateZ(${hover ? 4 : 0}vw)`,
+              : `perspective(10000px) rotateX(80deg) rotateZ(40deg) translateZ(${
+                  hover ? 4 : 0
+                }vw)`,
           }}
         >
           <div className="cassette-shape">
@@ -218,23 +280,28 @@ export const Cassette = (props) => {
                       })
                     ) : (
                       <>
-                        <div id="color_bar_0"
+                        <div
+                          id="color_bar_0"
                           className="color_bar"
                           style={{ backgroundColor: "rgb(255, 0, 0)" }}
                         ></div>
-                        <div id="color_bar_1"
+                        <div
+                          id="color_bar_1"
                           className="color_bar"
                           style={{ backgroundColor: "rgb(0, 255, 0)" }}
                         ></div>
-                        <div id="color_bar_2"
+                        <div
+                          id="color_bar_2"
                           className="color_bar"
                           style={{ backgroundColor: "rgb(0, 0, 255)" }}
                         ></div>
-                        <div id="color_bar_3"
+                        <div
+                          id="color_bar_3"
                           className="color_bar"
                           style={{ backgroundColor: "rgb(255, 255, 0)" }}
                         ></div>
-                        <div id="color_bar_4"
+                        <div
+                          id="color_bar_4"
                           className="color_bar"
                           style={{ backgroundColor: "rgb(255, 0, 255)" }}
                         ></div>
@@ -242,16 +309,14 @@ export const Cassette = (props) => {
                     )}
                   </div>
                   <div className="cassette_face_info">
-                     
-                    <span className="song_key" style={{ backgroundColor: song.bg_color, color: "black" }}>
-                      {
-                        songKey ? songKey : ""
-                      }
+                    <span
+                      className="song_key"
+                      style={{ backgroundColor: song.bg_color, color: "black" }}
+                    >
+                      {songKey ? songKey : ""}
                     </span>
 
-                    <span className="song_name song_text">
-                      {song.name}
-                    </span>
+                    <span className="song_name song_text">{song.name}</span>
                     <br />
                     <span className="song_artist_album song_text">
                       {song.artist} {props.album ? "-" : ""} {props.album}
@@ -263,11 +328,12 @@ export const Cassette = (props) => {
                     {/* <tdkLogo /> */}
                     <img
                       src={
-                        song.audio_features ? 
-                          BrandLogoByFeatures(song.audio_features) : 
-                          BrandLogoByID(song.id)
+                        song.audio_features
+                          ? BrandLogoByFeatures(song.audio_features)
+                          : BrandLogoByID(song.id)
                       }
-                      alt="TDK Logo"
+                      id="brand_logo"
+                      alt="brand_logo"
                       width="60"
                       height="60"
                       style={{
@@ -275,7 +341,8 @@ export const Cassette = (props) => {
                         position: "relative",
                         bottom: "-6px",
                         left: "0px",
-                      }} />
+                      }}
+                    />
                   </div>
                 </div>
               </div>
@@ -294,8 +361,9 @@ export const Cassette = (props) => {
                   ) : (
                     <></>
                   )}
-                  <span className="song_number" 
-                    style={{ 
+                  <span
+                    className="song_number"
+                    style={{
                       // backgroundColor: song.bg_color,
                       color: isWhite ? "black" : "white",
                       marginTop: "20px",
@@ -317,9 +385,10 @@ export const Cassette = (props) => {
               <div
                 className="reel-shape cylinder-2 cyl-2"
                 style={{
-                  animation: isPlaying || hover
-                    ? `spin ${reel_speed ? reel_speed : 2}s linear infinite`
-                    : "unset",
+                  animation:
+                    isPlaying || hover
+                      ? `spin ${reel_speed ? reel_speed : 2}s linear infinite`
+                      : "unset",
                   backgroundColor: song.bg_color,
                 }}
               >
@@ -357,9 +426,10 @@ export const Cassette = (props) => {
               <div
                 className="reel-shape cylinder-2 cyl-2"
                 style={{
-                  animation: isPlaying || hover
-                    ? `spin ${reel_speed ? reel_speed : 2}s linear infinite`
-                    : "unset",
+                  animation:
+                    isPlaying || hover
+                      ? `spin ${reel_speed ? reel_speed : 2}s linear infinite`
+                      : "unset",
                   backgroundColor: song.bg_color,
                 }}
               >
