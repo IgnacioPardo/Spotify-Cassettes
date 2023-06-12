@@ -32,6 +32,42 @@ body {
   transition: 0.2s ease;
 }
 
+.loading_overlay{
+
+  width: 100vw;
+  height: 100vh;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  transition: all 0.2s ease;
+
+}
+
+.loading_anim{
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 20px solid $spotify-green;
+  border-top: 20px solid $white-0;
+  animation: loading_rotate 1s linear infinite;
+  transition: all 0.2s ease;
+
+  z-index: 1000;
+
+  @keyframes loading_rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+}
+
 #Cassette_10{
   display: none !important;
   visibility: hidden !important;
@@ -85,14 +121,6 @@ body {
   background-color: $spotify-green;
   color: black;
   box-shadow: none;
-}
-
-.switch-field label:first-of-type {
-  // border-radius: 20px 0 0 20px;
-}
-
-.switch-field label:last-of-type {
-  // border-radius: 0 20px 20px 0;
 }
 
 #App {
@@ -183,6 +211,7 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: row;
+  transition: all 0.2s ease;
 
   img{
     height: 100%;
@@ -319,7 +348,7 @@ a {
 #cassette-gallery{
   width: 100vw;
   height: 40vh;
-
+  filter: blur(50px) opacity(100%);
 }
 
 .song_info{
@@ -390,6 +419,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: -10;
 }
 
 .shadow-shape1 {
@@ -426,6 +456,7 @@ $depth: 1.4vw;
   position: absolute;
   transition: 0.6s ease !important;
   cursor: pointer;
+  z-index: 10;
 
   .case-scene {
     width: $width;

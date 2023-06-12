@@ -57,6 +57,12 @@ app.get('/app', function (req, res) {
 //     res.sendFile(path.resolve(__dirname, '../build', 'index.html'));
 // });
 
+app.get('/src/spotify.js', function (req, res) {
+    // With MIME type application/javascript
+
+    res.sendFile(path.resolve(__dirname, '../src', 'spotify.js'), { type: 'application/javascript' });
+});
+
 app.get('/login', function (req, res) {
 
     var state = generateRandomString(16);

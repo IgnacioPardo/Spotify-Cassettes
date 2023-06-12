@@ -1,30 +1,9 @@
 import React, { useState, useEffect } from "react";
 
-import tdkLogo from "./icons/tdk.svg";
-import sonyLogo from "./icons/sony.svg";
-import maxellLogo from "./icons/maxell.svg";
-import basfLogo from "./icons/basf.svg";
-
 import { fetchTracksAudioFeatures } from "../spotify.js";
 import ColorThief from "colorthief";
-import { sortColorsByLuma, Color2RGB, noteByKey } from "../utils.js";
-
-const brandLogos = [tdkLogo, sonyLogo, maxellLogo, basfLogo];
-
-const BrandLogoByFeatures = (features) => {
-  var acousticness = features.acousticness;
-  var energy = features.energy;
-  var danceability = features.danceability;
-
-  var value = ((acousticness + energy + danceability) * 100) % 4;
-  return brandLogos[Math.floor(value)];
-};
-
-const BrandLogoByID = (id) => {
-  return brandLogos[id % 4];
-};
-
-const varToString = varObj => Object.keys(varObj)[0];
+import { sortColorsByLuma, Color2RGB, noteByKey, colors } from "../utils.js";
+import { BrandLogoByFeatures, BrandLogoByID } from "./BrandLogoByFeatures.js";
 
 export const Cassette = (props) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -86,13 +65,15 @@ export const Cassette = (props) => {
       setIsSpotifyGreen(true);
     }
 
+    
     console.log({
       shade: shade,
       shade_quantile: shade_quantile,
       shades: shades,
     })
-
-  }, [shade]);
+   
+   
+  }, [shade, props.timeRange]);
 
   useEffect(() => {
     if (song.audio_features) {
@@ -111,7 +92,7 @@ export const Cassette = (props) => {
     if (song.audio_features) {
       var my_shade =
         song.audio_features.instrumentalness + song.audio_features.speechiness;
-      console.log(my_shade);
+      setShade(my_shade);
     }
   }, [song]);
 
@@ -275,36 +256,24 @@ export const Cassette = (props) => {
                             className="color_bar"
                             id={"color_bar_" + index}
                             style={{ backgroundColor: Color2RGB(color) }}
+                            key={"color_bar_" + index}
                           ></div>
                         );
                       })
                     ) : (
                       <>
-                        <div
-                          id="color_bar_0"
-                          className="color_bar"
-                          style={{ backgroundColor: "rgb(255, 0, 0)" }}
-                        ></div>
-                        <div
-                          id="color_bar_1"
-                          className="color_bar"
-                          style={{ backgroundColor: "rgb(0, 255, 0)" }}
-                        ></div>
-                        <div
-                          id="color_bar_2"
-                          className="color_bar"
-                          style={{ backgroundColor: "rgb(0, 0, 255)" }}
-                        ></div>
-                        <div
-                          id="color_bar_3"
-                          className="color_bar"
-                          style={{ backgroundColor: "rgb(255, 255, 0)" }}
-                        ></div>
-                        <div
-                          id="color_bar_4"
-                          className="color_bar"
-                          style={{ backgroundColor: "rgb(255, 0, 255)" }}
-                        ></div>
+                      {
+                        colors.slice(0, 5).map((color, index) => {
+                          return (
+                            <div
+                              className="color_bar"
+                              id={"color_bar_" + index}
+                              style={{ backgroundColor: color }}
+                              key={"color_bar_" + index}
+                            ></div>
+                          );
+                        })
+                      }
                       </>
                     )}
                   </div>
@@ -355,6 +324,7 @@ export const Cassette = (props) => {
                         <div
                           className={"color_dot dot" + index}
                           style={{ backgroundColor: Color2RGB(color) }}
+                          key={"dot" + index}
                         ></div>
                       );
                     })

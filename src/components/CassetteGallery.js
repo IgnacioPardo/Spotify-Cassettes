@@ -22,6 +22,7 @@ const CassetteGallery = (props) => {
               shift={props.shift}
               isFullscreen={props.isFullscreen}
               setFullscreen={props.setFullscreen}
+              timeRange={props.timeRange}
             />
           );
         })}

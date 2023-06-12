@@ -1,5 +1,11 @@
+import clickSound from "./components/sounds/click.mp3";
+import switchSound from "./components/sounds/switch.mp3";
+import rewindSound from "./components/sounds/rewind.mp3";
+import forwardSound from "./components/sounds/fforward.mp3";
 
-function bestColorByLuma(colors) {
+export const colors = ["#4cb8f5", "#a6e630", "#f5e82f", "#E75776", "#414073", "#4C3B4D"];
+
+export const bestColorByLuma = (colors) => {
   // Find the best color by luma
   var bestColor = colors[0];
   var bestLuma = 0;
@@ -16,7 +22,7 @@ function bestColorByLuma(colors) {
   return bestColor;
 }
 
-function sortColorsByLuma(colors) {
+export const sortColorsByLuma = (colors) => {
   // Sort colors by luma
   var sortedColors = [];
 
@@ -35,14 +41,44 @@ function sortColorsByLuma(colors) {
   });
 }
 
-const Color2RGB = (color) => {
+export const Color2RGB = (color) => {
   return `rgb(${color[0]}, ${color[1]}, ${color[2]})`
 }
 
 
-const noteByKey = (key) => {
+export const noteByKey = (key) => {
     var notes = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
     return notes[key];
 }
 
-export { bestColorByLuma, sortColorsByLuma, Color2RGB, noteByKey };
+export const playSound = (sound) => {
+  let sounds = {
+    click: clickSound,
+    switch: switchSound,
+    rewind: rewindSound,
+    forward: forwardSound,
+  };
+
+  let audio = new Audio(sounds[sound]);
+  let playPromise = audio.play();
+
+  if (playPromise !== undefined) {
+    playPromise.then((_) => { }).catch((error) => { });
+  }
+}
+
+export const formatTime = (time) => {
+  // Format time to mm:ss
+
+  let minutes = Math.floor(time / 60);
+  let seconds = Math.floor(time % 60);
+
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  }
+
+  return `${minutes}:${seconds}`;
+}

@@ -1,28 +1,19 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
+
 import CassetteGallery from "./components/CassetteGallery.js";
 
-import playPauseIcon from "./components/icons/play_pauseIcon.svg";
-import stopIcon from "./components/icons/stopIcon.svg";
-import rewindIcon from "./components/icons/rewindIcon.svg";
-import forwardIcon from "./components/icons/forwardIcon.svg";
+import { MenuBar } from "./components/MenuBar.js";
+import { SongInfoDisplay } from "./components/SongInfoDisplay.js";
+import { LoadingOverlay } from "./components/LoadingOverlay.js";
+import { DownloadDataButton } from "./components/DownloadDataButton.js";
 
-import clickSound from "./components/sounds/click.mp3";
-import switchSound from "./components/sounds/switch.mp3";
-import rewindSound from "./components/sounds/rewind.mp3";
-import forwardSound from "./components/sounds/fforward.mp3";
+import { fetchTopTracks, fetchTopArtists, fetchUserData } from "./spotify.js";
 
-import spotifyLogo from "./components/icons/spotify.svg";
-
-import {
-  fetchTopTracks,
-  fetchTopArtists,
-  fetchUserData,
-  fetchTracksAudioFeatures,
-} from "./spotify.js";
+import { colors, playSound } from "./utils.js";
+import { handleAccessTokenError } from "./handleAccessTokenError.js";
 
 import defaultSongs from "./cassettes.json";
-
 /*
 import chonaCassettes from './cassettes_chona.json';
 import lucaCassettes from './cassettes_luca.json';
@@ -38,140 +29,7 @@ const cassettes = chonaCassettes.slice(0, 4).concat(lucaCassettes.slice(0, 3)).c
 var last = JSON.parse(JSON.stringify(defaultSongs.at(-1)));
 defaultSongs.push(last);
 defaultSongs.at(-1).id = defaultSongs.length - 1;
-console.log(defaultSongs);
-
-const PlayerIcon = ({ name }) => {
-  // Player icons
-  let icons = {
-    play_pause: playPauseIcon,
-    stop: stopIcon,
-    rewind: rewindIcon,
-    forward: forwardIcon,
-  };
-
-  return (
-    <div className="player_icon" id={name}>
-      <img src={icons[name]} alt={name} />
-    </div>
-  );
-};
-
-const TimeRangeSelector = ({ setRange, timeRange }) => {
-  return (
-    <>
-      <div className="time_range_selector switch-field">
-        <input
-          type="radio"
-          id="short_term"
-          name="time_range"
-          value="short_term"
-          checked={timeRange === "short_term"}
-          onChange={() => setRange("short_term")}
-        />
-        <label htmlFor="short_term">4 Weeks</label>
-        <input
-          type="radio"
-          id="medium_term"
-          name="time_range"
-          value="medium_term"
-          checked={timeRange === "medium_term"}
-          onChange={() => setRange("medium_term")}
-        />
-        <label htmlFor="medium_term">6 Months</label>
-        <input
-          type="radio"
-          id="long_term"
-          name="time_range"
-          value="long_term"
-          checked={timeRange === "long_term"}
-          onChange={() => setRange("long_term")}
-        />
-        <label htmlFor="long_term">All Time</label>
-      </div>
-    </>
-  );
-};
-
-const PlayerControls = ({ setControlAction }) => {
-  return (
-    <>
-      <div className="player_controls">
-        <button
-          className="player_btn"
-          id="btn_rewind"
-          onClick={() => {
-            setControlAction("rewind");
-          }}
-        >
-          <PlayerIcon name="rewind" />
-        </button>
-
-        <button
-          className="player_btn"
-          id="btn_play_pause"
-          onClick={() => {
-            setControlAction("play_pause");
-          }}
-        >
-          <PlayerIcon name="play_pause" />
-        </button>
-
-        <button
-          className="player_btn"
-          id="btn_stop"
-          onClick={() => {
-            setControlAction("stop");
-          }}
-        >
-          <PlayerIcon name="stop" />
-        </button>
-
-        <button
-          className="player_btn"
-          id="btn_forward"
-          onClick={() => {
-            setControlAction("forward");
-          }}
-        >
-          <PlayerIcon name="forward" />
-        </button>
-      </div>
-    </>
-  );
-};
-
-let colors = ["#4cb8f5", "#a6e630", "#f5e82f", "#E75776", "#414073", "#4C3B4D"];
-
-function formatTime(time) {
-  // Format time to mm:ss
-
-  let minutes = Math.floor(time / 60);
-  let seconds = Math.floor(time % 60);
-
-  if (minutes < 10) {
-    minutes = "0" + minutes;
-  }
-  if (seconds < 10) {
-    seconds = "0" + seconds;
-  }
-
-  return `${minutes}:${seconds}`;
-}
-
-function handleAccessTokenError(err) {
-  // If access token is invalid, redirect to refresh_token endpoint with current refresh token
-  console.log("err", err);
-  if (err.status === 401) {
-    //var searchParams = new URLSearchParams(window.location.search);
-    //let refresh_token = searchParams.get("refresh_token");
-    //console.log("refresh_token", refresh_token);
-    //window.location.redirect(`/refresh_token?refresh_token=${refresh_token}`);
-    // window.location.href = "/app?expired=true&refresh_token=${refresh_token}";
-
-    alert("Your session has expired. Please log in again.");
-    window.location.href = "/login";
-  }
-}
+// console.log(defaultSongs);
 
 function App() {
   const [currentItemId, setCurrentItemId] = useState(null);
@@ -193,13 +51,29 @@ function App() {
 
   const [timeRange, setTimeRange] = useState("short_term");
 
+  const [isLoading, setIsLoading] = useState(false);
+
   var searchParams = new URLSearchParams(window.location.search);
+  
+  const handleScroll = (event) => {
+    // Handle scroll event
+    setScrollShift(
+      Math.min(0, Math.max(-16, scrollShift + event.deltaY * 0.1))
+    );
+  };
+  
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1100);
+  }, [songs]);
 
   useEffect(() => {
     // Fetch user data
     if (searchParams.has("access_token")) {
       var accessToken = searchParams.get("access_token");
       console.log(accessToken);
+      setIsLoading(true);
 
       fetchUserData(accessToken, setUserData, handleAccessTokenError, () => {});
       fetchTopArtists(
@@ -220,7 +94,9 @@ function App() {
   }, []);
 
   useEffect(() => {
+    setScrollShift(-8);
     setControlAction("stop");
+    setIsLoading(true);
     if (searchParams.has("access_token")) {
       var accessToken = searchParams.get("access_token");
       fetchTopTracks(
@@ -270,31 +146,6 @@ function App() {
     }
   }, [userTopTracks]);
 
-  const handleScroll = (event) => {
-    // Handle scroll event
-    setScrollShift(
-      Math.min(0, Math.max(-16, scrollShift + event.deltaY * 0.1))
-    );
-    //scrollShift + event.deltaY * 0.1);
-    // console.log(scrollShift);
-  };
-
-  function playSound(sound) {
-    let sounds = {
-      click: clickSound,
-      switch: switchSound,
-      rewind: rewindSound,
-      forward: forwardSound,
-    };
-
-    let audio = new Audio(sounds[sound]);
-    let playPromise = audio.play();
-
-    if (playPromise !== undefined) {
-      playPromise.then((_) => {}).catch((error) => {});
-    }
-  }
-
   useEffect(() => {
     let audio = document.querySelector("#musicPlayer");
     let playPromise;
@@ -308,6 +159,7 @@ function App() {
       playSound("click");
     } else if (controlAction === "stop") {
       setControlAction("");
+      setScrollShift(-8);
       var playingCassette = document.querySelector(".cassette.playing");
       // console.log(playingCassette);
       if (playingCassette) {
@@ -424,110 +276,42 @@ function App() {
     }
   }, [currentSongDuration, currentSongTime]);
 
+  const displayUserData = () => {
+    if (userData) {
+      alert(`
+        Name: ${userData.display_name}
+        Email: ${userData.email}
+        Country: ${userData.country}
+        Followers: ${userData.followers.total}
+        Spotify URL: ${userData.external_urls.spotify}
+      `);
+    }
+  }
+
   return (
     <div id="App" onWheel={handleScroll}>
-      <div className="menu">
-        {isSignedIn ? (
-          <>
-            <TimeRangeSelector setRange={setTimeRange} timeRange={timeRange} />
-            <div className="user_info">
-              <img
-                src={userData?.images[0].url}
-                alt="{userData.display_name}'s Profile Picture"
-                className="user_profile_pic"
-              />
-              <a className="logout_btn spotify_btn" href="/app">
-                <img
-                  src={spotifyLogo}
-                  alt="Spotify Logo"
-                  className="spotify_logo"
-                />
-                <span>Logout</span>
-              </a>
-            </div>
-          </>
-        ) : (
-          <>
-            <a className="login_btn spotify_btn" href="/login">
-              <img
-                src={spotifyLogo}
-                alt="Spotify Logo"
-                className="spotify_logo"
-              />
-              <span>Login with Spotify</span>
-            </a>
-          </>
-        )}
-      </div>
-      <div className="info" id="info_panel">
-        {userData?.display_name ? (
-          <h1 className="user_name">
-            {userData.display_name}'s <b>Spotify Cassettes 📼</b>
-          </h1>
-        ) : (
-          <h1 className="user_name">Spotify Cassettes 📼</h1>
-        )}
-        <br></br>
-        <div
-          className="song_info"
-          style={{
-            opacity: currentSong ? "1" : "0",
-            transition: "opacity 0.5s ease-in-out",
-          }}
-        >
-          <div className="song_info_display">
-            {currentSong?.image ? (
-              <div className="song_info_image">
-                <img src={currentSong?.image} alt="Album Artwork" />
-              </div>
-            ) : (
-              <></>
-            )}
-            <div className="song_info_texts">
-              <h2>{currentSong?.name}</h2>
-              <h3>
-                {currentSong?.album} {currentItemId ? "-" : ""}{" "}
-                {currentSong?.artist}
-              </h3>
-            </div>
-          </div>
-        </div>
-        <br></br>
-        <br></br>
-        <div
-          className="player_time"
-          style={{
-            opacity: currentSong ? "1" : "0",
-            transition: "opacity 0.5s ease-in-out",
-          }}
-        >
-          <div className="player_time_text">
-            {formatTime(currentSongTime)} / {formatTime(currentSongDuration)}
-          </div>
 
-          <div
-            className="player_time_bar"
-            onClick={(e) => {
-              let audio = document.querySelector("#musicPlayer");
-              let rect = e.target.getBoundingClientRect();
-              let x = e.clientX - rect.left;
-              let width = rect.right - rect.left;
-              let percent = x / width;
-              audio.currentTime = percent * audio.duration;
-              setCurrentSongTime(audio.currentTime);
-            }}
-          >
-            <div
-              className="player_time_bar_progress"
-              style={{
-                width: `${(currentSongTime / currentSongDuration) * 100}%`,
-              }}
-            ></div>
-          </div>
-          <br></br>
-          <PlayerControls setControlAction={setControlAction} />
-        </div>
-      </div>
+      <MenuBar 
+        isSignedIn={isSignedIn} 
+        setTimeRange={setTimeRange} 
+        timeRange={timeRange} 
+        userData={userData} 
+        isLoading={isLoading}
+        displayUserData={displayUserData}
+      />
+
+      <SongInfoDisplay 
+        userData={userData}
+        currentSong={currentSong}
+        currentSongTime={currentSongTime}
+        currentSongDuration={currentSongDuration}
+        controlAction={controlAction}
+        setControlAction={setControlAction}
+        setCurrentSongTime={setCurrentSongTime}
+        setCurrentSongDuration={setCurrentSongDuration}
+      />
+
+      <LoadingOverlay isLoading={isLoading} />
 
       <CassetteGallery
         songs={songs}
@@ -538,10 +322,12 @@ function App() {
           transform:
             currentItemId !== null ? "translateY(500px)" : "translateY(340px)",
           transition: "transform 0.5s ease-in-out",
+          filter: isLoading ? "blur(50px) opacity(100%)" : "none",
         }}
         shift={scrollShift}
         isFullscreen={isFullscreen}
         setFullscreen={setFullscreen}
+        timeRange={timeRange}
       />
 
       <audio
@@ -557,39 +343,7 @@ function App() {
       />
 
       {isSignedIn ? (
-        <button
-          className="download_json_btn"
-          onClick={(e) => {
-            e.preventDefault();
-            const element = document.createElement("a");
-            const file = new Blob([JSON.stringify(songs)], {
-              type: "text/plain",
-            });
-            element.href = URL.createObjectURL(file);
-            element.download = "cassettes.json";
-            document.body.appendChild(element); // Required for this to work in FireFox
-            element.click();
-          }}
-          style={{
-            position: "absolute",
-            bottom: "20px",
-            right: "20px",
-            zIndex: "100",
-            fontFamily: "SF Pro Display",
-            fontSize: "20px",
-            fontWeight: "bold",
-            color: "white",
-            backgroundColor: "black",
-            borderRadius: "50%",
-            width: "50px",
-            height: "50px",
-            border: "none",
-            outline: "none",
-            cursor: "pointer",
-          }}
-        >
-          􀈅
-        </button>
+        <DownloadDataButton data={songs} />
       ) : (
         <></>
       )}
