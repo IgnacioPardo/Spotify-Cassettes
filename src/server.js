@@ -13,7 +13,6 @@ var args = process.argv.slice(2);
 
 var debug = args[0] === '-d' || args[0] === '--debug';
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -30,7 +29,10 @@ dotenv.config();
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 
-const redirect_uri = 'https://13f5-181-167-121-18.ngrok-free.app/callback';
+console.log({client_id});
+console.log({client_secret});
+
+const redirect_url = process.env.DOMAIN + "/callback";
 
 function generateRandomString(length) {
     var text = '';
@@ -74,7 +76,7 @@ app.get('/login', function (req, res) {
             response_type: 'code',
             client_id: client_id,
             scope: scope,
-            redirect_uri: redirect_uri,
+            redirect_uri: redirect_url,
             state: state
         }));
 });
@@ -97,7 +99,7 @@ app.get('/callback', async function (req, res) {
             url: 'https://accounts.spotify.com/api/token',
             form: {
                 code: code,
-                redirect_uri: redirect_uri,
+                redirect_uri: redirect_url,
                 grant_type: 'authorization_code'
             },
             headers: {
@@ -144,7 +146,7 @@ app.get('/refresh_token', function (req, res) {
     var body = querystring.stringify({
         grant_type: 'client_credentials',
         refresh_token: refresh_token,
-        redirect_uri: "https://13f5-181-167-121-18.ngrok-free.app/callback"
+        redirect_uri: redirect_url
     });
 
     fetch(url, {
