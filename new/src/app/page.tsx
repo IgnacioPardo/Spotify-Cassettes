@@ -64,7 +64,7 @@ const formatedTime = (time: number) => {
 
 export default function Home() {
     return (
-        <main className="flex flex-col min-h-screen items-center justify-between">
+        <main className="">
             {/* <PlayerControls /> */}
             <CassetteGallery songs={songs} />
         </main>
