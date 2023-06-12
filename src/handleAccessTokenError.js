@@ -6,8 +6,8 @@ export function handleAccessTokenError(err) {
     let refresh_token = searchParams.get("refresh_token");
     //console.log("refresh_token", refresh_token);
     //window.location.redirect(`/refresh_token?refresh_token=${refresh_token}`);
-    alert("Your session has expired. Please log in again.");
-    window.location.href = "/login";
-    window.location.href = `/refresh_token=${refresh_token}`;
+    // alert("Your session has expired. Please log in again.");
+    // window.location.href = "/login";
+    window.location.href = `/refresh_token?refresh_token=${refresh_token}`;
   }
 }

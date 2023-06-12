@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Spotify Cassettes is a web app that allows you to create a playlist of your favorite songs and share it with your friends."
+    />
+    <link rel="apple-touch-icon" href="/192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="/manifest.json" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <!-- <script src="../src/spotify.js"></script> -->
+    <title>Spotify Cassettes</title>
+    <style>
+      body {
+        background-color: #1cb955;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 70vh;
+        width: 100vw;
+        gap: 2rem;
+      }
+
+      h1 {
+        font-family: "Inter", sans-serif;
+        font-size: 3rem;
+        color: black;
+        text-align: center;
+        margin-top: 10%;
+      }
+
+      span {
+        font-family: "Inter", sans-serif;
+        font-size: 2rem;
+        color: black;
+        text-align: center;
+      }
+
+      button {
+        font-family: "SF Pro Display", "Inter", sans-serif;
+        font-size: 1rem;
+        color: white;
+        background-color: black;
+        border: none;
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        width: 220px;
+        height: 40px;
+
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Spotify Cassettes 📼</h1>
+    <span
+      >Sorry, this site is not supported on Safari.<br />
+      Please use Chrome or Firefox to view this site.</span
+    >
+    <button onclick="copyToClipboard()">􀒡  Copy Link to Clipboard</button>
+    <script>
+      function copyToClipboard() {
+        navigator.clipboard.writeText(window.location.href);
+        alert(
+          `Link copied to clipboard!
+Now open Chrome or Firefox and paste the link.`
+        );
+      }
+    </script>
+  </body>
+</html>

@@ -45,14 +45,20 @@ function generateRandomString(length) {
 }
 
 app.get('/app', function (req, res) {
-    var access_token = req.query.access_token;
-    if (debug){
-        console.log(access_token);
+    // GET BROWSER METADATA 
+    // IF BROWSER IS SAFARI, REDIRECT TO SAFARI PAGE
+
+    var userAgent = req.headers['user-agent'];
+    console.log(userAgent);
+    if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
+        res.sendFile(path.resolve(__dirname, '../build', 'safari.html'));
+    } else {
+        var access_token = req.query.access_token;
+        if (debug){
+            console.log(access_token);
+        }
+        res.sendFile(path.resolve(__dirname, '../build', 'index.html'));
     }
-    //if (access_token) {
-        // React app opens up with access token
-    res.sendFile(path.resolve(__dirname, '../build', 'index.html'));
-    //}
 });
 
 // app.get('*', (req, res) => {
@@ -154,10 +160,10 @@ app.get('/refresh_token', function (req, res) {
         headers: headers,
         body: body
     }).then(response => {
-        console.log(response);
         return response.json();
     })
-        .then(data => {
+    .then(data => {
+            console.log(data);
             var access_token = data.access_token;
             res.redirect('/app?' +
                 querystring.stringify({
