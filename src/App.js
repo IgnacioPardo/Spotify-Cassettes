@@ -341,12 +341,12 @@ function App() {
         }}
         preload="auto"
       />
-
-      {isSignedIn ? (
+    
+      {/* {isSignedIn ? (
         <DownloadDataButton data={songs} />
       ) : (
         <></>
-      )}
+      )} */}
     </div>
   );
 }
