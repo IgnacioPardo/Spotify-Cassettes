@@ -5,34 +5,37 @@ import React, { useState, useEffect, useRef } from "react";
 import * as Plot from "@observablehq/plot";
 // https://observablehq.com/plot/getting-started#plot-in-react
 
-import cassettes from "../data/cassettes.json";
-
-console.log(cassettes);
-
-const PlotComponent = (props) => {
+const PlotComponentScatterPlot = (props) => {
     
     const containerRef = useRef();
-    const [data, setData] = useState(cassettes);
+    const [data, setData] = useState(props.data);
 
-    useEffect(() => {
-        //d3.csv("/gistemp.csv", d3.autoType).then(setData);
-    }, []);
-
-    useEffect(() => {
+    useEffect(() => { // SCATTERPLOT POPULARITY
         if (data === undefined) return;
+    
         const plot = Plot.plot({
-            //y: { grid: true },
-            //color: { scheme: "burd" },
             marks: [
-                Plot.dot(cassettes.slice(0, 10), {
-                    x: (d) => d.audio_features.danceability,
-                    y: (d) => d.audio_features.energy,
-                    fill: "id",
+                Plot.dot(data, {
+                    x: (d) => d.popularity,
+                    y: (d) => d.name,
+                    fill: (d) => d.bg_color, // Use the bg_color property for fill color
                     size: 64,
-                    title: "name",
+                    title: (d) => d.name,
                 }),
-            ]
+            ],
+            axis: {
+                x: {
+                    label: "Popularity",
+                    tickFormat: (d) => String(d),
+                },
+                y: {
+                    label: "Track",
+                    tickFormat: (d) => d.toString(),
+                    tickRotate: -45,
+                },
+            },
         });
+    
         containerRef.current.append(plot);
         return () => plot.remove();
     }, [data]);
@@ -40,4 +43,46 @@ const PlotComponent = (props) => {
     return <div ref={containerRef} />;
 }
 
-export default PlotComponent;
+const PlotComponentHistogram = (props) => {
+    
+    const containerRef = useRef();
+    const [data, setData] = useState(props.data);
+        
+    useEffect(() => { // HISTOGRAMA INSTUMENTALNESS
+        if (data === undefined) return;
+    
+        const histogramData = data.map((track) => ({
+            instrumentalness: track.audio_features.instrumentalness,
+            bg_color: track.bg_color,
+        }));
+    
+        const plot = Plot.plot({
+            marks: [
+                Plot.rect(histogramData, {
+                    x: "instrumentalness",
+                    y: "count",
+                    fill: (d) => d.bg_color,
+                }),
+            ],
+            encoding: {
+                count: "count()",
+            },
+            axis: {
+                x: {
+                    label: "Instrumentalness",
+                },
+                y: {
+                    label: "Count",
+                    tickFormat: (d) => String(d),
+                },
+            },
+        });
+    
+        containerRef.current.append(plot);
+        return () => plot.remove();
+    }, [data]);
+
+    return <div ref={containerRef} />;
+}
+
+export {PlotComponentScatterPlot, PlotComponentHistogram};

@@ -26,7 +26,7 @@ const cassettes = chonaCassettes.slice(0, 4).concat(lucaCassettes.slice(0, 3)).c
 });
 */
 
-import PlotComponent from "./components/PlotComponent.js";
+import {PlotComponentScatterPlot, PlotComponentHistogram} from "./components/PlotComponent.js";
 
 var last = JSON.parse(JSON.stringify(defaultSongs.at(-1)));
 defaultSongs.push(last);
@@ -359,7 +359,8 @@ function App() {
 
       <div className="plotsModal" style={{ display: showPlots ? "flex" : "none" }}>
         <div className="plotsModalContent">
-          <PlotComponent />
+          <PlotComponentScatterPlot data={songs} />
+          <PlotComponentHistogram data={songs} />
         </div>
       </div>
     </div>
