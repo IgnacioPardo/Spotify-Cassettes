@@ -16,6 +16,23 @@ body {
   background-color: #4cb8f5;
   transition: 0.2s ease; }
 
+.plotsModal {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px); }
+
+.plotsModalContent {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; }
+
 .loading_overlay {
   width: 100vw;
   height: 100vh;
@@ -179,7 +196,7 @@ body {
   top: 0;
   right: 0;
   padding: 40px;
-  z-index: 100; }
+  z-index: 10000; }
 
 a {
   text-decoration: none;

@@ -2,7 +2,7 @@ import React from "react";
 import spotifyLogo from "./icons/spotify.svg";
 import { TimeRangeSelector } from "./TimeRangeSelector.js";
 
-export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoading, displayUserData }) => {
+export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoading, displayUserData, showPlots, setShowPlots }) => {
   return (
   <div className="menu" style={{
     opacity: isLoading ? "0" : "1",
@@ -36,6 +36,20 @@ export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoadi
       </>
     ) : (
       <>
+        <div
+          src="https://via.placeholder.com/40"
+          style={{
+            // transition: "opacity 0.5s ease-in-out",
+            cursor: "pointer",
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            backgroundColor: "black",
+          }}
+          onClick={() => {
+            setShowPlots(!showPlots);
+          }}
+        ></div>
         <a className="login_btn spotify_btn" href="/login">
           <img
             src={spotifyLogo}

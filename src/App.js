@@ -13,7 +13,7 @@ import { fetchTopTracks, fetchTopArtists, fetchUserData } from "./spotify.js";
 import { colors, playSound } from "./utils.js";
 import { handleAccessTokenError } from "./handleAccessTokenError.js";
 
-import defaultSongs from "./cassettes.json";
+import defaultSongs from "./data/cassettes.json";
 /*
 import chonaCassettes from './cassettes_chona.json';
 import lucaCassettes from './cassettes_luca.json';
@@ -25,6 +25,8 @@ const cassettes = chonaCassettes.slice(0, 4).concat(lucaCassettes.slice(0, 3)).c
   return cassette;
 });
 */
+
+import PlotComponent from "./components/PlotComponent.js";
 
 var last = JSON.parse(JSON.stringify(defaultSongs.at(-1)));
 defaultSongs.push(last);
@@ -52,6 +54,8 @@ function App() {
   const [timeRange, setTimeRange] = useState("short_term");
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [showPlots, setShowPlots] = useState(false);
 
   var searchParams = new URLSearchParams(window.location.search);
   
@@ -289,7 +293,9 @@ function App() {
   }
 
   return (
-    <div id="App" onWheel={handleScroll}>
+    <div id="App" 
+        //onWheel={handleScroll}
+        >
 
       <MenuBar 
         isSignedIn={isSignedIn} 
@@ -298,6 +304,8 @@ function App() {
         userData={userData} 
         isLoading={isLoading}
         displayUserData={displayUserData}
+        showPlots={showPlots}
+        setShowPlots={setShowPlots}
       />
 
       <SongInfoDisplay 
@@ -320,7 +328,7 @@ function App() {
         currentItemId={currentItemId}
         style={{
           transform:
-            currentItemId !== null ? "translateY(500px)" : "translateY(340px)",
+            (currentItemId !== null ? "translateY(500px)" : "translateY(340px)"),
           transition: "transform 0.5s ease-in-out",
           filter: isLoading ? "blur(50px) opacity(100%)" : "none",
         }}
@@ -328,6 +336,7 @@ function App() {
         isFullscreen={isFullscreen}
         setFullscreen={setFullscreen}
         timeRange={timeRange}
+        isModalOpen={showPlots}
       />
 
       <audio
@@ -347,6 +356,12 @@ function App() {
       ) : (
         <></>
       )}
+
+      <div className="plotsModal" style={{ display: showPlots ? "flex" : "none" }}>
+        <div className="plotsModalContent">
+          <PlotComponent />
+        </div>
+      </div>
     </div>
   );
 }
