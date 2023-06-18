@@ -19,7 +19,8 @@ const __dirname = path.dirname(__filename);
 var app = express();
 
 //app.use(express.static('public'));
-app.listen(8888, () => console.log('Server started on port 8888'));
+const port = process.env.PORT || 9001;
+app.listen(port, () => console.log(`Listening on port ${port}`));
 
 // Have Node serve the files for our built React app
 app.use(express.static(path.resolve(__dirname, '../build')));
