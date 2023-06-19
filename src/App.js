@@ -26,7 +26,11 @@ const cassettes = chonaCassettes.slice(0, 4).concat(lucaCassettes.slice(0, 3)).c
 });
 */
 
-import {PlotComponentScatterPlot, PlotComponentHistogram} from "./components/PlotComponent.js";
+import {
+  PlotComponentScatterPlot,
+  PlotComponentHistogram,
+  MetricComponent,
+} from "./components/PlotComponent.js";
 
 var last = JSON.parse(JSON.stringify(defaultSongs.at(-1)));
 defaultSongs.push(last);
@@ -58,14 +62,14 @@ function App() {
   const [showPlots, setShowPlots] = useState(false);
 
   var searchParams = new URLSearchParams(window.location.search);
-  
+
   const handleScroll = (event) => {
     // Handle scroll event
     setScrollShift(
       Math.min(0, Math.max(-16, scrollShift + event.deltaY * 0.1))
     );
   };
-  
+
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
@@ -290,25 +294,25 @@ function App() {
         Spotify URL: ${userData.external_urls.spotify}
       `);
     }
-  }
+  };
 
   return (
-    <div id="App" 
-        //onWheel={handleScroll}
-        >
-
-      <MenuBar 
-        isSignedIn={isSignedIn} 
-        setTimeRange={setTimeRange} 
-        timeRange={timeRange} 
-        userData={userData} 
+    <div
+      id="App"
+      //onWheel={handleScroll}
+    >
+      <MenuBar
+        isSignedIn={isSignedIn}
+        setTimeRange={setTimeRange}
+        timeRange={timeRange}
+        userData={userData}
         isLoading={isLoading}
         displayUserData={displayUserData}
         showPlots={showPlots}
         setShowPlots={setShowPlots}
       />
 
-      <SongInfoDisplay 
+      <SongInfoDisplay
         userData={userData}
         currentSong={currentSong}
         currentSongTime={currentSongTime}
@@ -319,6 +323,43 @@ function App() {
         setCurrentSongDuration={setCurrentSongDuration}
       />
 
+      <div
+        className="plotsModal"
+        style={{ display: showPlots ? "flex" : "none" }}
+      >
+        <div className="plotsModalContent">
+          <div className="metricsContainer">
+            <MetricComponent
+              title="Danceability"
+              color="black"
+              data={songs
+                .slice(0, 10)
+                .map((d) => d.audio_features.danceability * 100)}
+              icon="🕺"
+            />
+
+            <MetricComponent
+              title="Speechiness"
+              color="black"
+              data={songs
+                .slice(0, 10)
+                .map((d) => d.audio_features.speechiness * 100)}
+            />
+
+            <MetricComponent
+              title="Instrumentalness"
+              color="black"
+              data={songs
+                .slice(0, 10)
+                .map((d) => d.audio_features.instrumentalness * 100)}
+            />
+          </div>
+
+          {/* <PlotComponentScatterPlot data={songs.slice(0, 10)} /> */}
+          <PlotComponentHistogram data={songs.slice(0, 10)} />
+        </div>
+      </div>
+
       <LoadingOverlay isLoading={isLoading} />
 
       <CassetteGallery
@@ -328,7 +369,7 @@ function App() {
         currentItemId={currentItemId}
         style={{
           transform:
-            (currentItemId !== null ? "translateY(500px)" : "translateY(340px)"),
+            currentItemId !== null ? "translateY(500px)" : "translateY(340px)",
           transition: "transform 0.5s ease-in-out",
           filter: isLoading ? "blur(50px) opacity(100%)" : "none",
         }}
@@ -351,18 +392,8 @@ function App() {
         preload="auto"
       />
 
-      {isSignedIn ? (
-        <DownloadDataButton data={songs} />
-      ) : (
-        <></>
-      )}
+      {isSignedIn ? <DownloadDataButton data={songs} /> : <></>}
 
-      <div className="plotsModal" style={{ display: showPlots ? "flex" : "none" }}>
-        <div className="plotsModalContent">
-          <PlotComponentScatterPlot data={songs} />
-          <PlotComponentHistogram data={songs} />
-        </div>
-      </div>
     </div>
   );
 }

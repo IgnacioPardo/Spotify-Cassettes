@@ -5,13 +5,20 @@ import React, { useState, useEffect, useRef } from "react";
 import * as Plot from "@observablehq/plot";
 // https://observablehq.com/plot/getting-started#plot-in-react
 
+//import d3 from "d3";
+
+import addTooltips from "../tooltip.js";
+
 const PlotComponentScatterPlot = (props) => {
     
     const containerRef = useRef();
-    const [data, setData] = useState(props.data);
+    const data = props.data;
 
     useEffect(() => { // SCATTERPLOT POPULARITY
         if (data === undefined) return;
+
+        console.log(data.map((d) => d.popularity));
+
     
         const plot = Plot.plot({
             marks: [
@@ -23,17 +30,7 @@ const PlotComponentScatterPlot = (props) => {
                     title: (d) => d.name,
                 }),
             ],
-            axis: {
-                x: {
-                    label: "Popularity",
-                    tickFormat: (d) => String(d),
-                },
-                y: {
-                    label: "Track",
-                    tickFormat: (d) => d.toString(),
-                    tickRotate: -45,
-                },
-            },
+            
         });
     
         containerRef.current.append(plot);
@@ -46,36 +43,45 @@ const PlotComponentScatterPlot = (props) => {
 const PlotComponentHistogram = (props) => {
     
     const containerRef = useRef();
-    const [data, setData] = useState(props.data);
+    const data = props.data;
+
+    console.log(data.map((d) => d.popularity));
         
     useEffect(() => { // HISTOGRAMA INSTUMENTALNESS
         if (data === undefined) return;
-    
-        const histogramData = data.map((track) => ({
-            instrumentalness: track.audio_features.instrumentalness,
-            bg_color: track.bg_color,
-        }));
-    
+
+        // El radio es en función de la popularidad
         const plot = Plot.plot({
             marks: [
-                Plot.rect(histogramData, {
-                    x: "instrumentalness",
-                    y: "count",
+                Plot.dot(data, {
+                    x: (d) => (d.audio_features.instrumentalness * 100),
+                    y: (d) => (d.audio_features.danceability * 100),
                     fill: (d) => d.bg_color,
+                    r: 20,
+                    // Y axis is reversed
+                    yReverse: true,
+
                 }),
             ],
-            encoding: {
-                count: "count()",
+            x: {
+                label: "Instrumentalness",
+                transform: (x) => `${Math.round(x)} %`
             },
-            axis: {
-                x: {
-                    label: "Instrumentalness",
-                },
-                y: {
-                    label: "Count",
-                    tickFormat: (d) => String(d),
-                },
+            y: {
+                label: "Danceability",
+                transform: (x) => `${Math.round(x)} %`,
+                // domain: [0, 100],
             },
+            width: 700,
+            height: 600,
+            style: {
+                background: "rgba(0, 0, 0, 0.4)",
+                backdropFilter: "blur(1000px)",
+                padding: "1rem",
+                borderRadius: "1rem",
+                color: "white",
+            },
+            tip: "xy"
         });
     
         containerRef.current.append(plot);
@@ -83,6 +89,69 @@ const PlotComponentHistogram = (props) => {
     }, [data]);
 
     return <div ref={containerRef} />;
+}
+
+export const MetricComponent = (props) => {
+    
+    const mean = (arr) => {
+        return arr.reduce((x, y) => x + y) / arr.length
+    }
+    const avg = mean(props.data)
+
+    // A sliced circle to represent a percentage, like a pie chart
+    // The percentage shown in the middle of the circle as text
+    const circle = (p, color) => {
+        const r = 30;
+        const c = Math.PI * (r * 2);
+        const pct = ((100 - p) / 100) * c;
+
+        return (
+            <div className="metric">
+            <h3>{props.title}</h3>
+            {/* <h4>{props.icon}</h4> */}
+                <svg height={r * 2 + 10} width={r * 2 + 10}>
+                    <circle
+                        className="circle-bg"
+                        cx={r + 5}
+                        cy={r + 5}
+                        r={r}
+                        fill="transparent"
+                        stroke="rgba(0, 0, 0, 0.3)" //
+                        strokeWidth="10"
+                        style={{
+                            strokeDashoffset: pct,
+                        }}
+                    />
+                    <circle
+                        className="circle"
+                        cx={r + 5}
+                        cy={r + 5}
+                        r={r}
+                        fill="transparent"
+                        stroke={color}
+                        strokeWidth="10"
+                        strokeDasharray={r * Math.PI * 2}
+                        style={{
+                            strokeDashoffset: pct,
+                        }}
+                    />
+                    <text
+                        x="50%"
+                        y="52%"
+                        dominantBaseline="middle"
+                        textAnchor="middle"
+                        fontSize="18"
+                        fontWeight="bold"
+                    >
+                        {Math.round(p)}%
+                        {/* {props.icon} */}
+                    </text>
+                </svg>
+            </div>
+        );
+    };
+
+    return circle(avg, props.color);
 }
 
 export {PlotComponentScatterPlot, PlotComponentHistogram};

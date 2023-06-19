@@ -65,12 +65,12 @@ export const Cassette = (props) => {
       setIsSpotifyGreen(true);
     }
 
-    
+    /* 
     console.log({
       shade: shade,
       shade_quantile: shade_quantile,
       shades: shades,
-    })
+    }) */
    
    
   }, [shade, props.timeRange]);
