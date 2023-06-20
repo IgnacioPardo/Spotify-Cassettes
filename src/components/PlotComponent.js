@@ -15,7 +15,7 @@ const PlotSongBubbles = (props) => {
     const data = props.data;
     const key_name = props.key_name;
 
-    console.log(data.map((d) => d.popularity));
+    // console.log(data.map((d) => d.popularity));
         
     useEffect(() => {
         if (data === undefined) return;
@@ -100,13 +100,13 @@ export const MetricComponent = (props) => {
                 return arr.reduce((x, y) => x + y) / arr.length
             }
             
-            console.log(props.title.toLowerCase());
+            // console.log(props.title.toLowerCase());
 
-            console.log(props.data[0].audio_features[props.title.toLowerCase()]);   
+            // console.log(props.data[0].audio_features[props.title.toLowerCase()]);   
 
-            console.log(props.data.slice(0, 10).map(
-                (d) => d.audio_features[props.title.toLowerCase()] * 100
-            ));
+            // console.log(props.data.slice(0, 10).map(
+                // (d) => d.audio_features[props.title.toLowerCase()] * 100
+            // ));
 
             const avg = mean(props.data.slice(0, 10).map(
                 (d) => d.audio_features[props.title.toLowerCase()] * 100

@@ -8,6 +8,7 @@ export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoadi
     opacity: isLoading ? "0" : "1",
     transition: "opacity 0.5s ease-in-out",
   }}>
+      
       <div
         className={showPlots ? "menu_btn active" : "menu_btn"}
         onClick={() => {
@@ -23,7 +24,7 @@ export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoadi
         <div className="user_info">
           <img
             src={userData?.images[0].url}
-            alt="{userData.display_name}'s Profile Picture"
+            alt={`${userData.display_name}'s Profile Picture`}
             className="user_profile_pic" 
             style={{ 
               opacity: isLoading ? "0" : "1",

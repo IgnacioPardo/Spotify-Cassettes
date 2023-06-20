@@ -32,6 +32,95 @@ body {
   transition: 0.2s ease;
 }
 
+.social_media_post_btns{
+  position: absolute;
+  right: 80px;
+  right: 40px;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  width: 40px;
+  gap: 10px;
+  z-index: 1000000000;
+}
+
+.round_btn {
+  color: white;
+  background-color: black;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: SF Pro Display;
+  font-size: 20px;
+  z-index: 1000000000;
+}
+
+.social_media_post_container{
+  display: none;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 100000000;
+  background-color: rgba(0,0,0,0.3);
+}
+
+.social_media_post{
+  display: flex;
+  // opacity: 0;
+  flex-direction: column;
+  height: 600px;
+  width: calc(600px * 9 / 16);
+  background-color: white;
+  color: black;
+  font-family: "SF Pro Display";
+  font-size: 20px;
+  font-weight: bold;
+  padding: 1rem;
+  overflow: hidden;
+  //border: 1px solid black;
+}
+
+.social_media_post_header{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-direction: column;
+  width: 100%;
+  height: 100px;
+  padding: 1rem;
+  gap: 10px;
+}
+.social_media_post_title {
+  font-size: 28px;
+}
+
+.social_media_post_subtitle{
+  font-size: 20px;
+}
+
+.social_media_post_footer{
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100px;
+  gap: 2px;
+  font-size: 10px;
+}
+
 .plotsModal{
   width: 100vw;
   height: 100vh;
@@ -1031,6 +1120,7 @@ $depth: 1.4vw;
         height: 3.1622776601683795vw;
         transform: translateZ(-0.5vw) rotateX(18.434948822922017deg);
         background-color: $black-1;
+        border: 1.25px solid $black-0;
       }
 
       .bk {
@@ -1369,6 +1459,7 @@ $depth: 1.4vw;
 
       .ft .full-mask {
         background-color: #cccccc !important;
+        border-top: 0.125vw solid #cccccc !important;
       }
     }
 
@@ -1491,6 +1582,7 @@ $translucency: 0.6;
 
       .ft .full-mask {
         background-color: darken($spotify-green, 10%) !important;
+        border: 0.125vw solid darken($spotify-green, 10%) !important;
       }
     }
 

@@ -7,6 +7,7 @@ import { MenuBar } from "./components/MenuBar.js";
 import { SongInfoDisplay } from "./components/SongInfoDisplay.js";
 import { LoadingOverlay } from "./components/LoadingOverlay.js";
 import { DownloadDataButton } from "./components/DownloadDataButton.js";
+import { GenerateSocialMediaPostButton } from "./components/GenerateSocialMediaPost.js";
 
 import { fetchTopTracks, fetchTopArtists, fetchUserData } from "./spotify.js";
 
@@ -14,17 +15,6 @@ import { colors, playSound } from "./utils.js";
 import { handleAccessTokenError } from "./handleAccessTokenError.js";
 
 import defaultSongs from "./data/cassettes.json";
-/*
-import chonaCassettes from './cassettes_chona.json';
-import lucaCassettes from './cassettes_luca.json';
-import gesaCassttes from './cassettes_gesa.json';
-
-// merge all cassettes into one array of length 10
-const cassettes = chonaCassettes.slice(0, 4).concat(lucaCassettes.slice(0, 3)).concat(gesaCassttes.slice(0, 3)).map((cassette, index) => {
-  cassette.id = index;
-  return cassette;
-});
-*/
 
 import {
   PlotSongBubbles,
@@ -398,6 +388,14 @@ function App() {
       />
 
       {isSignedIn ? <DownloadDataButton data={songs} /> : <></>}
+      <GenerateSocialMediaPostButton 
+        song={currentSong}
+        songs={songs} 
+        username={userData?.display_name}
+        timeRange={timeRange}
+        currentItemId={currentItemId ? currentItemId : 0}
+        setIsLoading={setIsLoading}
+      />
     </div>
   );
 }
