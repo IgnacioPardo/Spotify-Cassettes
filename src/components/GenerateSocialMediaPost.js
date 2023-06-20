@@ -123,7 +123,6 @@ export const GenerateSocialMediaPostButton = (props) => {
                             navigator.share({
                                 title: "Spotify Cassettes",
                                 text: "Check out my Spotify Cassettes!",
-                                //url: "https://spotify-cassettes.vercel.app",
                                 files: [image],
                             })
                                 .then(() => console.log('Successful share'))
