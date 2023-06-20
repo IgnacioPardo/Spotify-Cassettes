@@ -13,7 +13,7 @@ import { fetchTopTracks, fetchTopArtists, fetchUserData } from "./spotify.js";
 import { colors, playSound } from "./utils.js";
 import { handleAccessTokenError } from "./handleAccessTokenError.js";
 
-import defaultSongs from "./cassettes.json";
+import defaultSongs from "./data/cassettes.json";
 /*
 import chonaCassettes from './cassettes_chona.json';
 import lucaCassettes from './cassettes_luca.json';
@@ -25,6 +25,12 @@ const cassettes = chonaCassettes.slice(0, 4).concat(lucaCassettes.slice(0, 3)).c
   return cassette;
 });
 */
+
+import {
+  PlotComponentScatterPlot,
+  PlotComponentHistogram,
+  MetricComponent,
+} from "./components/PlotComponent.js";
 
 var last = JSON.parse(JSON.stringify(defaultSongs.at(-1)));
 defaultSongs.push(last);
@@ -53,15 +59,18 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const [showPlots, setShowPlots] = useState(false);
+  const [plotKeyName, setPlotKeyName] = useState("danceability");
+
   var searchParams = new URLSearchParams(window.location.search);
-  
+
   const handleScroll = (event) => {
     // Handle scroll event
     setScrollShift(
       Math.min(0, Math.max(-16, scrollShift + event.deltaY * 0.1))
     );
   };
-  
+
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
@@ -286,21 +295,25 @@ function App() {
         Spotify URL: ${userData.external_urls.spotify}
       `);
     }
-  }
+  };
 
   return (
-    <div id="App" onWheel={handleScroll}>
-
-      <MenuBar 
-        isSignedIn={isSignedIn} 
-        setTimeRange={setTimeRange} 
-        timeRange={timeRange} 
-        userData={userData} 
+    <div
+      id="App"
+      //onWheel={handleScroll}
+    >
+      <MenuBar
+        isSignedIn={isSignedIn}
+        setTimeRange={setTimeRange}
+        timeRange={timeRange}
+        userData={userData}
         isLoading={isLoading}
         displayUserData={displayUserData}
+        showPlots={showPlots}
+        setShowPlots={setShowPlots}
       />
 
-      <SongInfoDisplay 
+      <SongInfoDisplay
         userData={userData}
         currentSong={currentSong}
         currentSongTime={currentSongTime}
@@ -310,6 +323,54 @@ function App() {
         setCurrentSongTime={setCurrentSongTime}
         setCurrentSongDuration={setCurrentSongDuration}
       />
+
+      <div
+        className="plotsModal"
+        style={{ display: showPlots ? "flex" : "none" }}
+      >
+        <div className="plotsModalContent">
+          <div className="metricsContainer">
+            <MetricComponent
+              title="Danceability"
+              color="black"
+              data={songs
+                .slice(0, 10)
+                .map((d) => d.audio_features.danceability * 100)}
+              icon="🕺"
+              onClick={() => {
+                setPlotKeyName("danceability");
+              }}
+            />
+
+            <MetricComponent
+              title="Speechiness"
+              color="black"
+              data={songs
+                .slice(0, 10)
+                .map((d) => d.audio_features.speechiness * 100)}
+              icon="🗣"
+              onClick={() => {
+                setPlotKeyName("speechiness");
+              }}
+            />
+
+            <MetricComponent
+              title="Instrumentalness"
+              color="black"
+              data={songs
+                .slice(0, 10)
+                .map((d) => d.audio_features.instrumentalness * 100)}
+              icon="🎻"
+              onClick={() => {
+                setPlotKeyName("instrumentalness");
+              }}
+            />
+          </div>
+
+          {/* <PlotComponentScatterPlot data={songs.slice(0, 10)} /> */}
+          <PlotComponentHistogram data={songs.slice(0, 10)} key_name={plotKeyName} />
+        </div>
+      </div>
 
       <LoadingOverlay isLoading={isLoading} />
 
@@ -328,6 +389,7 @@ function App() {
         isFullscreen={isFullscreen}
         setFullscreen={setFullscreen}
         timeRange={timeRange}
+        isModalOpen={showPlots}
       />
 
       <audio
@@ -341,12 +403,8 @@ function App() {
         }}
         preload="auto"
       />
-    
-      {/* {isSignedIn ? (
-        <DownloadDataButton data={songs} />
-      ) : (
-        <></>
-      )} */}
+
+      {isSignedIn ? <DownloadDataButton data={songs} /> : <></>}
     </div>
   );
 }

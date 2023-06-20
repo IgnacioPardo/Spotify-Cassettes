@@ -23,6 +23,7 @@ const CassetteGallery = (props) => {
               isFullscreen={props.isFullscreen}
               setFullscreen={props.setFullscreen}
               timeRange={props.timeRange}
+              isModalOpen={props.isModalOpen}
             />
           );
         })}

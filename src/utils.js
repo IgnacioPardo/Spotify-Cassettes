@@ -1,7 +1,12 @@
-import clickSound from "./components/sounds/click.mp3";
-import switchSound from "./components/sounds/switch.mp3";
-import rewindSound from "./components/sounds/rewind.mp3";
-import forwardSound from "./components/sounds/fforward.mp3";
+// import clickSound from "./components/sounds/click.mp3";
+// import switchSound from "./components/sounds/switch.mp3";
+// import rewindSound from "./components/sounds/rewind.mp3";
+// import forwardSound from "./components/sounds/fforward.mp3";
+
+const clickSound = "/audios/sounds/click.mp3";
+const switchSound = "/audios/sounds/switch.mp3";
+const rewindSound = "/audios/sounds/rewind.mp3";
+const forwardSound = "/audios/sounds/fforward.mp3";
 
 export const colors = ["#4cb8f5", "#a6e630", "#f5e82f", "#E75776", "#414073", "#4C3B4D"];
 
@@ -81,4 +86,14 @@ export const formatTime = (time) => {
   }
 
   return `${minutes}:${seconds}`;
+}
+
+export function generateRandomString(length) {
+  var text = '';
+  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  for (var i = 0; i < length; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
 }

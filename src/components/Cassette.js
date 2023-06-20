@@ -65,12 +65,12 @@ export const Cassette = (props) => {
       setIsSpotifyGreen(true);
     }
 
-    
+    /* 
     console.log({
       shade: shade,
       shade_quantile: shade_quantile,
       shades: shades,
-    })
+    }) */
    
    
   }, [shade, props.timeRange]);
@@ -186,7 +186,8 @@ export const Cassette = (props) => {
       <div
         className={["cassette", isPlaying ? "playing" : ""].join(" ")}
         style={{
-          transform: `translate3d(${shift * -100}px, ${shift * 10}px, 0)`,
+          transform: props.isModalOpen ? `translate3d(0, 0, 0) rotateX(0deg) rotateZ(0deg) rotateY(0deg) translateZ(-1000px)`
+           : `translate3d(${shift * -100}px, ${shift * 10}px, 0)`,
           transition: "transform 0.2s ease-in-out",
           //filter: playerPlaying ? isPlaying || hover ? "none" : "blur(4px)" : "none",
           //zIndex: props.shift + 1,

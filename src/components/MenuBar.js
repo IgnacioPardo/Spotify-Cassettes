@@ -2,12 +2,34 @@ import React from "react";
 import spotifyLogo from "./icons/spotify.svg";
 import { TimeRangeSelector } from "./TimeRangeSelector.js";
 
-export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoading, displayUserData }) => {
+export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoading, displayUserData, showPlots, setShowPlots }) => {
   return (
   <div className="menu" style={{
     opacity: isLoading ? "0" : "1",
     transition: "opacity 0.5s ease-in-out",
   }}>
+      <div
+        style={{
+          // transition: "opacity 0.5s ease-in-out",
+          cursor: "pointer",
+          width: "40px",
+          height: "40px",
+          borderRadius: "50%",
+          backgroundColor: "black",
+          fontFamily: "SF Pro",
+          fontSize: "14px",
+          fontWeight: "bold",
+          color: "white",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        onClick={() => {
+          setShowPlots(!showPlots);
+        }}
+      >
+        {!showPlots ? "􀜋" : "􀁡"}
+      </div>
 
     {isSignedIn ? (
       <>
@@ -34,7 +56,9 @@ export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoadi
           </a>
         </div>
       </>
-    ) : (
+    ) : 
+        !showPlots ? 
+    (
       <>
         <a className="login_btn spotify_btn" href="/login">
           <img
@@ -44,6 +68,7 @@ export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoadi
           <span>Login with Spotify</span>
         </a>
       </>
-    )}
+    ) : <></>
+  }
   </div>);
 };

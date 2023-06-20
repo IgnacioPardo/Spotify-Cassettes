@@ -16,6 +16,54 @@ body {
   background-color: #4cb8f5;
   transition: 0.2s ease; }
 
+.plotsModal {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px); }
+
+.plotsModalContent {
+  width: 100vw;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px; }
+
+.metricsContainer {
+  position: absolute;
+  top: 25%;
+  left: 5%;
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px; }
+
+.metric {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 10px;
+  border-radius: 1rem; }
+
+.metric:hover {
+  cursor: pointer;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: 0.2s ease;
+  backdrop-filter: blur(100px);
+  fill: white; }
+  .metric:hover .circle {
+    stroke: white; }
+  .metric:hover .circle-bg {
+    stroke: rgba(255, 255, 255, 0.4); }
+
 .loading_overlay {
   width: 100vw;
   height: 100vh;
@@ -95,7 +143,8 @@ body {
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center; }
+  align-items: center;
+  flex-direction: column; }
 
 .song_key {
   display: flex;
@@ -179,7 +228,8 @@ body {
   top: 0;
   right: 0;
   padding: 40px;
-  z-index: 100; }
+  z-index: 10000;
+  gap: 10px; }
 
 a {
   text-decoration: none;
