@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRef, useEffect, useState } from 'react';
-import { toPng, toSvg } from 'html-to-image';
+import { toPng } from 'html-to-image';
 
 import { Cassette } from './Cassette.js';
 
@@ -53,45 +53,48 @@ export const GenerateSocialMediaPostButton = (props) => {
 
 
     return (
-        <>  
-        <div className="social_media_post_container" ref={postContainerRef} 
-        style={{ 
-            display: showBtns ? "flex" : "none",
-            backgroundColor: showBtns ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0)",
-        }}>
+        <>
+            <div className="social_media_post_container" ref={postContainerRef}
+                style={{
+                    display: showBtns ? "flex" : "none",
+                    backgroundColor: showBtns ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0)",
+                }}>
 
-            <div className="social_media_post"
-                ref={postRef}
-                style={{ backgroundColor: props.songs[
-                    props.song ? props.song.id : props.currentItemId
-                ].bg_color }}>
+                <div className="social_media_post"
+                    ref={postRef}
+                    style={{
+                        backgroundColor: props.songs[
+                            props.song ? props.song.id : props.currentItemId
+                        ].bg_color
+                    }}>
 
-                <div className="social_media_post_header"s>
-                    <h1 className="social_media_post_title">
-                        {props.user_name === undefined ? "" : props.user_name + "'s"}
-                        <b>Spotify Cassettes 📼</b>
-                    </h1>
-                    <h2 className="social_media_post_subtitle">
-                        Most listened song in the last {
-                            props.timeRange === "short_term"
-                                ? "4 weeks"
-                                : props.timeRange === "medium_term"
-                                    ? "6 months"
-                                    : "several years"
-                        }:
-                    </h2>
+                    <div className="social_media_post_header" s>
+                        <h1 className="social_media_post_title">
+                            {props.username === undefined ? "" : props.username + "'s "}
+                            {props.username ? <br /> : ""}
+                            <b>Spotify Cassettes 📼</b>
+                        </h1>
+                        <h2 className="social_media_post_subtitle">
+                            Most listened song in the last {
+                                props.timeRange === "short_term"
+                                    ? "4 weeks"
+                                    : props.timeRange === "medium_term"
+                                        ? "6 months"
+                                        : "several years"
+                            }:
+                        </h2>
+                    </div>
+                    {post}
+                    <div className="social_media_post_footer">
+                        <center>
+                            <p className="social_media_post_footer_text">
+                                Made with <b>Spotify Cassettes</b> 📼
+                                <br />
+                                Check it out at <a href="https://spotify-cassettes.vercel.app">spotify-cassettes.vercel.app</a>
+                            </p>
+                        </center>
+                    </div>
                 </div>
-                {post}
-                <div className="social_media_post_footer">
-                    <center>
-                        <p className="social_media_post_footer_text">
-                            Made with <b>Spotify Cassettes</b> 📼
-                            <br />
-                            Check it out at <a href="https://spotify-cassettes.vercel.app">spotify-cassettes.vercel.app</a>
-                        </p>
-                    </center>
-                </div>
-            </div>
             </div>
 
             <div
@@ -128,7 +131,7 @@ export const GenerateSocialMediaPostButton = (props) => {
                                 .then(() => console.log('Successful share'))
                                 .catch((error) => console.log('Error sharing', error));
                         }
-                        else{
+                        else {
                             alert("Your browser doesn't support sharing. You can still download the image by clicking the download button.")
                         }
                     }}

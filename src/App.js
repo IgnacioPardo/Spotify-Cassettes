@@ -387,7 +387,7 @@ function App() {
         preload="auto"
       />
 
-      {isSignedIn ? <DownloadDataButton data={songs} /> : <></>}
+      {/* {isSignedIn ? <DownloadDataButton data={songs} /> : <></>} */}
       <GenerateSocialMediaPostButton 
         song={currentSong}
         songs={songs} 
