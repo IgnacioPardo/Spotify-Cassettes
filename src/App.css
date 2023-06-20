@@ -37,7 +37,7 @@ body {
   border: none;
   outline: none;
   cursor: pointer;
-  font-family: SF Pro Display;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
   font-size: 20px;
   z-index: 1000000000; }
 
@@ -59,7 +59,7 @@ body {
   width: calc(600px * 9 / 16);
   background-color: white;
   color: black;
-  font-family: "SF Pro Display";
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
   font-size: 20px;
   font-weight: bold;
   padding: 1rem;
@@ -164,7 +164,7 @@ body {
   height: 40px;
   border-radius: 50%;
   background-color: black;
-  font-family: "SF Pro";
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
   font-size: 14px;
   font-weight: bold;
   color: white;

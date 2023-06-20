@@ -2,7 +2,7 @@ import React from "react";
 
 export const DownloadDataButton = ({ data }) => {
   return <button
-    className="download_json_btn"
+    className="download_json_btn round_btn"
     onClick={(e) => {
       e.preventDefault();
       const element = document.createElement("a");
@@ -19,17 +19,6 @@ export const DownloadDataButton = ({ data }) => {
       bottom: "40px",
       right: "40px",
       zIndex: "100",
-      fontFamily: "SF Pro Display",
-      fontSize: "20px",
-      // fontWeight: "bold",
-      color: "white",
-      backgroundColor: "black",
-      borderRadius: "50%",
-      width: "50px",
-      height: "50px",
-      border: "none",
-      outline: "none",
-      cursor: "pointer",
     }}
   >
     􀯵
