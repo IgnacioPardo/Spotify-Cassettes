@@ -40,7 +40,7 @@ const PlotComponentScatterPlot = (props) => {
     return <div ref={containerRef} />;
 }
 
-const PlotComponentHistogram = (props) => {
+const PlotSongBubbles = (props) => {
     
     const containerRef = useRef();
     const data = props.data;
@@ -59,9 +59,6 @@ const PlotComponentHistogram = (props) => {
                     y: (d) => (d.audio_features[key_name] * 100),
                     fill: (d) => d.bg_color,
                     r: 20,
-                    // Y axis is reversed
-                    yReverse: true,
-
                 }),
             ],
             x: {
@@ -74,7 +71,7 @@ const PlotComponentHistogram = (props) => {
                 // domain: [0, 100],
             },
             width: 700,
-            height: 600,
+            height: 500,
             style: {
                 background: "rgba(0, 0, 0, 0.4)",
                 backdropFilter: "blur(1000px)",
@@ -89,74 +86,113 @@ const PlotComponentHistogram = (props) => {
     
         containerRef.current.append(addTooltips(plot));
         return () => plot.remove();
-    }, [data, key_name]);
+    }, [data, props.key_name]);
 
-    return <div ref={containerRef} />;
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    return (
+        <>
+        <h2>{capitalizeFirstLetter(props.key_name)}</h2>
+        <div ref={containerRef} />
+        </>
+    );
 }
 
 export const MetricComponent = (props) => {
-    
-    const mean = (arr) => {
-        return arr.reduce((x, y) => x + y) / arr.length
-    }
-    const avg = mean(props.data)
+    // const containerRef = useRef();
 
-    // A sliced circle to represent a percentage, like a pie chart
-    // The percentage shown in the middle of the circle as text
-    const circle = (p, color) => {
-        const r = 30;
-        const c = Math.PI * (r * 2);
-        const pct = ((100 - p) / 100) * c;
+    const [plot, setPlot] = useState(null);
 
-        return (
-            <div className="metric"
-                onClick={props.onClick}
-            >
-            <h3>{props.title}</h3>
-            {/* <h4>{props.icon}</h4> */}
-                <svg height={r * 2 + 10} width={r * 2 + 10}>
-                    <circle
-                        className="circle-bg"
-                        cx={r + 5}
-                        cy={r + 5}
-                        r={r}
-                        fill="transparent"
-                        stroke="rgba(0, 0, 0, 0.3)" //
-                        strokeWidth="10"
-                        style={{
-                            strokeDashoffset: pct,
-                        }}
-                    />
-                    <circle
-                        className="circle"
-                        cx={r + 5}
-                        cy={r + 5}
-                        r={r}
-                        fill="transparent"
-                        stroke={color}
-                        strokeWidth="10"
-                        strokeDasharray={r * Math.PI * 2}
-                        style={{
-                            strokeDashoffset: pct,
-                        }}
-                    />
-                    <text
-                        x="50%"
-                        y="52%"
-                        dominantBaseline="middle"
-                        textAnchor="middle"
-                        fontSize="18"
-                        fontWeight="bold"
-                    >
-                        {Math.round(p)}%
-                        {/* {props.icon} */}
-                    </text>
-                </svg>
-            </div>
-        );
-    };
+    useEffect(() => {
+        try {
+            if (props.data === undefined) return;
 
-    return circle(avg, props.color);
+            // No audio features
+            for (const d of props.data) {
+                if (d.audio_features === undefined) {
+                    return;
+                }
+            }
+
+            const mean = (arr) => {
+                return arr.reduce((x, y) => x + y) / arr.length
+            }
+            
+            console.log(props.title.toLowerCase());
+
+            console.log(props.data[0].audio_features[props.title.toLowerCase()]);   
+
+            console.log(props.data.slice(0, 10).map(
+                (d) => d.audio_features[props.title.toLowerCase()] * 100
+            ));
+
+            const avg = mean(props.data.slice(0, 10).map(
+                (d) => d.audio_features[props.title.toLowerCase()] * 100
+            ));
+
+            // A sliced circle to represent a percentage, like a pie chart
+            // The percentage shown in the middle of the circle as text
+            const circle = (p, color) => {
+                const r = 30;
+                const c = Math.PI * (r * 2);
+                const pct = ((100 - p) / 100) * c;
+
+                return (
+                    <div className="metric" onClick={props.onClick}>
+                        <h3>{props.title}</h3>
+                        {/* <h4>{props.icon}</h4> */}
+                        <svg height={r * 2 + 10} width={r * 2 + 10}>
+                            <circle
+                                className="circle-bg"
+                                cx={r + 5}
+                                cy={r + 5}
+                                r={r}
+                                fill="transparent"
+                                stroke="rgba(0, 0, 0, 0.3)" //
+                                strokeWidth="10"
+                                style={{
+                                    strokeDashoffset: pct,
+                                }}
+                            />
+                            <circle
+                                className="circle"
+                                cx={r + 5}
+                                cy={r + 5}
+                                r={r}
+                                fill="transparent"
+                                stroke={color}
+                                strokeWidth="10"
+                                strokeDasharray={r * Math.PI * 2}
+                                style={{
+                                    strokeDashoffset: pct,
+                                }}
+                            />
+                            <text
+                                x="50%"
+                                y="52%"
+                                dominantBaseline="middle"
+                                textAnchor="middle"
+                                fontSize="18"
+                                fontWeight="bold"
+                            >
+                                {Math.round(p)}%
+                                {/* {props.icon} */}
+                            </text>
+                        </svg>
+                    </div>
+                );
+            };
+            // containerRef.current = circle(avg, props.color);
+            // return circle(avg, props.color);
+            setPlot(circle(avg, props.color));
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }, [props.data, props.title, props.color, props.icon, props.onClick]);
+
+    return plot;
 }
 
-export {PlotComponentScatterPlot, PlotComponentHistogram};
+export { PlotComponentScatterPlot, PlotSongBubbles };
