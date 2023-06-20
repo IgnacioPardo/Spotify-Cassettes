@@ -119,6 +119,32 @@ body {
 
 }
 
+.menu_btn{
+
+  transition: all 0.2s ease;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: black;
+  font-family: "SF Pro";
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover{
+    cursor: pointer;
+    background-color: $spotify-green;
+    color: black;
+  }
+  .active{
+    background-color: $spotify-green;
+  }
+}
+
 .loading_anim{
   width: 100px;
   height: 100px;
@@ -147,7 +173,7 @@ body {
   display: flex;
   overflow: hidden;
   height: 40px;
-  margin-right: 10px;
+  // margin-right: 10px;
   border-radius: 20px;
   overflow: hidden;
 

@@ -77,6 +77,27 @@ body {
   flex-direction: column;
   transition: all 0.2s ease; }
 
+.menu_btn {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: black;
+  font-family: "SF Pro";
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+  .menu_btn:hover {
+    cursor: pointer;
+    background-color: #1CB955;
+    color: black; }
+  .menu_btn .active {
+    background-color: #1CB955; }
+
 .loading_anim {
   width: 100px;
   height: 100px;
@@ -101,7 +122,6 @@ body {
   display: flex;
   overflow: hidden;
   height: 40px;
-  margin-right: 10px;
   border-radius: 20px;
   overflow: hidden;
   z-index: 100; }

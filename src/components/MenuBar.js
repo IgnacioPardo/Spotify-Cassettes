@@ -9,21 +9,7 @@ export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoadi
     transition: "opacity 0.5s ease-in-out",
   }}>
       <div
-        style={{
-          // transition: "opacity 0.5s ease-in-out",
-          cursor: "pointer",
-          width: "40px",
-          height: "40px",
-          borderRadius: "50%",
-          backgroundColor: "black",
-          fontFamily: "SF Pro",
-          fontSize: "14px",
-          fontWeight: "bold",
-          color: "white",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
+        className={showPlots ? "menu_btn active" : "menu_btn"}
         onClick={() => {
           setShowPlots(!showPlots);
         }}
