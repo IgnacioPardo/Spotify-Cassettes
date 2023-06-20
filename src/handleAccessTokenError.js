@@ -8,6 +8,7 @@ export function handleAccessTokenError(err) {
     //window.location.redirect(`/refresh_token?refresh_token=${refresh_token}`);
     // alert("Your session has expired. Please log in again.");
     // window.location.href = "/login";
-    window.location.href = `/refresh_token?refresh_token=${refresh_token}`;
+    //window.location.href = `/refresh_token?refresh_token=${refresh_token}`;
+    window.location.href = "/app";
   }
 }
