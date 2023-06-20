@@ -28,7 +28,7 @@ const cassettes = chonaCassettes.slice(0, 4).concat(lucaCassettes.slice(0, 3)).c
 
 import {
   PlotComponentScatterPlot,
-  PlotComponentHistogram,
+  PlotSongBubbles,
   MetricComponent,
 } from "./components/PlotComponent.js";
 
@@ -333,9 +333,7 @@ function App() {
             <MetricComponent
               title="Danceability"
               color="black"
-              data={songs
-                .slice(0, 10)
-                .map((d) => d.audio_features.danceability * 100)}
+              data={songs}
               icon="🕺"
               onClick={() => {
                 setPlotKeyName("danceability");
@@ -345,9 +343,7 @@ function App() {
             <MetricComponent
               title="Speechiness"
               color="black"
-              data={songs
-                .slice(0, 10)
-                .map((d) => d.audio_features.speechiness * 100)}
+              data={songs}
               icon="🗣"
               onClick={() => {
                 setPlotKeyName("speechiness");
@@ -357,9 +353,7 @@ function App() {
             <MetricComponent
               title="Instrumentalness"
               color="black"
-              data={songs
-                .slice(0, 10)
-                .map((d) => d.audio_features.instrumentalness * 100)}
+              data={songs}
               icon="🎻"
               onClick={() => {
                 setPlotKeyName("instrumentalness");
@@ -368,7 +362,7 @@ function App() {
           </div>
 
           {/* <PlotComponentScatterPlot data={songs.slice(0, 10)} /> */}
-          <PlotComponentHistogram data={songs.slice(0, 10)} key_name={plotKeyName} />
+          <PlotSongBubbles data={songs.slice(0, 10)} key_name={plotKeyName} />
         </div>
       </div>
 
