@@ -27,7 +27,6 @@ const cassettes = chonaCassettes.slice(0, 4).concat(lucaCassettes.slice(0, 3)).c
 */
 
 import {
-  PlotComponentScatterPlot,
   PlotSongBubbles,
   MetricComponent,
 } from "./components/PlotComponent.js";

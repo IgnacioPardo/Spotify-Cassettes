@@ -9,37 +9,6 @@ import * as Plot from "@observablehq/plot";
 
 import addTooltips from "../tooltip.js";
 
-const PlotComponentScatterPlot = (props) => {
-    
-    const containerRef = useRef();
-    const data = props.data;
-
-    useEffect(() => { // SCATTERPLOT POPULARITY
-        if (data === undefined) return;
-
-        console.log(data.map((d) => d.popularity));
-
-    
-        const plot = Plot.plot({
-            marks: [
-                Plot.dot(data, {
-                    x: (d) => d.popularity,
-                    y: (d) => d.name,
-                    fill: (d) => d.bg_color, // Use the bg_color property for fill color
-                    size: 64,
-                    title: (d) => d.name,
-                }),
-            ],
-            
-        });
-    
-        containerRef.current.append(plot);
-        return () => plot.remove();
-    }, [data]);
-
-    return <div ref={containerRef} />;
-}
-
 const PlotSongBubbles = (props) => {
     
     const containerRef = useRef();
@@ -50,43 +19,55 @@ const PlotSongBubbles = (props) => {
         
     useEffect(() => {
         if (data === undefined) return;
+        try {
+            if (props.data === undefined) return;
 
-        // El radio es en función de la popularidad
-        const plot = Plot.plot({
-            marks: [
-                Plot.dot(data, {
-                    x: (d) => (d.popularity),
-                    y: (d) => (d.audio_features[key_name] * 100),
-                    fill: (d) => d.bg_color,
-                    r: 20,
-                }),
-            ],
-            x: {
-                label: "Popularity",
-                transform: (x) => `${Math.round(x)} %`
-            },
-            y: {
-                label: props.key_name,
-                transform: (x) => `${Math.round(x)} %`,
-                // domain: [0, 100],
-            },
-            width: 700,
-            height: 500,
-            style: {
-                background: "rgba(0, 0, 0, 0.4)",
-                backdropFilter: "blur(1000px)",
-                padding: "1rem",
-                borderRadius: "1rem",
-                color: "white",
-                animation: "fade-in 0.5s ease-in-out",
-                transition: "all 0.5s ease-in-out",
-            },
-            tip: "xy"
-        });
-    
-        containerRef.current.append(addTooltips(plot));
-        return () => plot.remove();
-    }, [data, props.key_name]);
+            // No audio features
+            for (const d of props.data) {
+                if (d.audio_features === undefined) {
+                    return;
+                }
+            }
+
+            // El radio es en función de la popularidad
+            const plot = Plot.plot({
+                marks: [
+                    Plot.dot(data, {
+                        x: (d) => (d.popularity),
+                        y: (d) => (d.audio_features[key_name] * 100),
+                        fill: (d) => d.bg_color,
+                        r: 20,
+                    }),
+                ],
+                x: {
+                    label: "Popularity",
+                    transform: (x) => `${Math.round(x)} %`
+                },
+                y: {
+                    label: props.key_name,
+                    transform: (x) => `${Math.round(x)} %`,
+                    // domain: [0, 100],
+                },
+                width: 700,
+                height: 500,
+                style: {
+                    background: "rgba(0, 0, 0, 0.4)",
+                    backdropFilter: "blur(1000px)",
+                    padding: "1rem",
+                    borderRadius: "1rem",
+                    color: "white",
+                    animation: "fade-in 0.5s ease-in-out",
+                    transition: "all 0.5s ease-in-out",
+                },
+                tip: "xy"
+            });
+        
+            containerRef.current.append(addTooltips(plot));
+            return () => plot.remove();
+        } catch (error) {
+            console.log(error);
+        }
+    }, [data, props.key_name, props.data, key_name]);
 
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -195,4 +176,4 @@ export const MetricComponent = (props) => {
     return plot;
 }
 
-export { PlotComponentScatterPlot, PlotSongBubbles };
+export {PlotSongBubbles };
