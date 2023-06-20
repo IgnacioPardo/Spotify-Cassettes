@@ -205,6 +205,7 @@ export const Cassette = (props) => {
           //zIndex: isPlaying ? 100 : 0,
           //opacity: playerPlaying ? isPlaying ? 1 : 0.5 : 1,
           cursor: props.isPosing ? "" : "pointer",
+          display: props.songId > 9 ? "none" : "",
         }}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
@@ -218,7 +219,6 @@ export const Cassette = (props) => {
         id={"Cassette_" + song.id}
         aria-label={song.name}
         aria-checked={isPlaying}
-        // add new value for shade
         data-shade={shade}
       >
         <div className="shadow-scene"
