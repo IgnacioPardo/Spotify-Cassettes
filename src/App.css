@@ -228,7 +228,8 @@ body {
   top: 0;
   right: 0;
   padding: 40px;
-  z-index: 10000; }
+  z-index: 10000;
+  gap: 10px; }
 
 a {
   text-decoration: none;

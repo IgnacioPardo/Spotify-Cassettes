@@ -60,6 +60,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [showPlots, setShowPlots] = useState(false);
+  const [plotKeyName, setPlotKeyName] = useState("danceability");
 
   var searchParams = new URLSearchParams(window.location.search);
 
@@ -336,6 +337,9 @@ function App() {
                 .slice(0, 10)
                 .map((d) => d.audio_features.danceability * 100)}
               icon="🕺"
+              onClick={() => {
+                setPlotKeyName("danceability");
+              }}
             />
 
             <MetricComponent
@@ -344,6 +348,10 @@ function App() {
               data={songs
                 .slice(0, 10)
                 .map((d) => d.audio_features.speechiness * 100)}
+              icon="🗣"
+              onClick={() => {
+                setPlotKeyName("speechiness");
+              }}
             />
 
             <MetricComponent
@@ -352,11 +360,15 @@ function App() {
               data={songs
                 .slice(0, 10)
                 .map((d) => d.audio_features.instrumentalness * 100)}
+              icon="🎻"
+              onClick={() => {
+                setPlotKeyName("instrumentalness");
+              }}
             />
           </div>
 
           {/* <PlotComponentScatterPlot data={songs.slice(0, 10)} /> */}
-          <PlotComponentHistogram data={songs.slice(0, 10)} />
+          <PlotComponentHistogram data={songs.slice(0, 10)} key_name={plotKeyName} />
         </div>
       </div>
 

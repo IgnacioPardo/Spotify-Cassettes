@@ -44,18 +44,19 @@ const PlotComponentHistogram = (props) => {
     
     const containerRef = useRef();
     const data = props.data;
+    const key_name = props.key_name;
 
     console.log(data.map((d) => d.popularity));
         
-    useEffect(() => { // HISTOGRAMA INSTUMENTALNESS
+    useEffect(() => {
         if (data === undefined) return;
 
         // El radio es en función de la popularidad
         const plot = Plot.plot({
             marks: [
                 Plot.dot(data, {
-                    x: (d) => (d.audio_features.instrumentalness * 100),
-                    y: (d) => (d.audio_features.danceability * 100),
+                    x: (d) => (d.popularity),
+                    y: (d) => (d.audio_features[key_name] * 100),
                     fill: (d) => d.bg_color,
                     r: 20,
                     // Y axis is reversed
@@ -64,11 +65,11 @@ const PlotComponentHistogram = (props) => {
                 }),
             ],
             x: {
-                label: "Instrumentalness",
+                label: "Popularity",
                 transform: (x) => `${Math.round(x)} %`
             },
             y: {
-                label: "Danceability",
+                label: props.key_name,
                 transform: (x) => `${Math.round(x)} %`,
                 // domain: [0, 100],
             },
@@ -80,13 +81,15 @@ const PlotComponentHistogram = (props) => {
                 padding: "1rem",
                 borderRadius: "1rem",
                 color: "white",
+                animation: "fade-in 0.5s ease-in-out",
+                transition: "all 0.5s ease-in-out",
             },
             tip: "xy"
         });
     
-        containerRef.current.append(plot);
+        containerRef.current.append(addTooltips(plot));
         return () => plot.remove();
-    }, [data]);
+    }, [data, key_name]);
 
     return <div ref={containerRef} />;
 }
@@ -106,7 +109,9 @@ export const MetricComponent = (props) => {
         const pct = ((100 - p) / 100) * c;
 
         return (
-            <div className="metric">
+            <div className="metric"
+                onClick={props.onClick}
+            >
             <h3>{props.title}</h3>
             {/* <h4>{props.icon}</h4> */}
                 <svg height={r * 2 + 10} width={r * 2 + 10}>
