@@ -3,7 +3,7 @@ import * as htl from "htl";
 
 let html = htl.html;
 
-const addTooltips = (chart, hover_styles = { fill: "blue", opacity: 0.5 }) => {
+const addTooltips = (chart, hover_styles = { fill: "#1CB955", opacity: 0.5 }) => {
   html = htl.html;
   let styles = hover_styles;
   const line_styles = {
@@ -67,7 +67,7 @@ const addTooltips = (chart, hover_styles = { fill: "blue", opacity: 0.5 }) => {
         .on("mousemove", function (event) {
           const text = d3.select(this).attr("__title");
           const pointer = d3.pointer(event, wrapper.node());
-          if (text) tip.call(hover, pointer, text.split("\n"));
+          if (text) tip.call(hover, pointer, text.split("\n"), styles);
           else tip.selectAll("*").remove();
 
           // Raise it
@@ -116,7 +116,10 @@ const addTooltips = (chart, hover_styles = { fill: "blue", opacity: 0.5 }) => {
   return chart;
 }
 
-const hover = (tip, pos, text) => {
+const hover = (tip, pos, text, styles = {
+  fill: "#1CB955",
+  stroke: "black",
+}) => {
   const side_padding = 10;
   const vertical_padding = 5;
   const vertical_offset = 15;
@@ -136,7 +139,8 @@ const hover = (tip, pos, text) => {
     .text((d) => d)
     .attr("y", (d, i) => (i - (text.length - 1)) * 15 - vertical_offset)
     .style("font-weight", (d, i) => (i === 0 ? "bold" : "normal"))
-    .style("fill", (d, i) => (i === 0 ? "white" : "white"));
+    .style("font-size", (d, i) => (i === 0 ? "16px" : "12px"))
+    .style("fill", (d, i) => (i === 0 ? "black" : "black"));
 
   const bbox = tip.node().getBBox();
 
@@ -147,8 +151,8 @@ const hover = (tip, pos, text) => {
     .attr("x", bbox.x - side_padding)
     .attr("width", bbox.width + side_padding * 2)
     .attr("height", bbox.height + vertical_padding * 2)
-    .style("fill", "#FF8D3A")
-    .style("stroke", "white")
+    .style("fill", styles.fill)
+    .style("stroke", "black")
     .style("color", "white")
     .style("stroke-width", 1)
     .attr("rx", 5)

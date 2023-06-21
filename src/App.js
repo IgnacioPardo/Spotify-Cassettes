@@ -73,7 +73,7 @@ function App() {
       console.log(accessToken);
       setIsLoading(true);
 
-      fetchUserData(accessToken, setUserData, handleAccessTokenError, () => {});
+      fetchUserData(accessToken, setUserData, handleAccessTokenError, () => { });
       fetchTopArtists(
         accessToken,
         setUserTopArtists,
@@ -230,7 +230,7 @@ function App() {
     }
 
     if (playPromise !== undefined) {
-      playPromise.then((_) => {}).catch((error) => {});
+      playPromise.then((_) => { }).catch((error) => { });
     }
   }, [controlAction, currentSong]);
 
@@ -289,7 +289,7 @@ function App() {
   return (
     <div
       id="App"
-      //onWheel={handleScroll}
+    //onWheel={handleScroll}
     >
       <MenuBar
         isSignedIn={isSignedIn}
@@ -318,40 +318,45 @@ function App() {
         style={{ display: showPlots ? "flex" : "none" }}
       >
         <div className="plotsModalContent">
-          <div className="metricsContainer">
-            <MetricComponent
-              title="Danceability"
-              color="black"
-              data={songs}
-              icon="🕺"
-              onClick={() => {
-                setPlotKeyName("danceability");
-              }}
-            />
+          <div className="plotContainer">
+            <div className="metricsContainer">
+              <MetricComponent
+                title="Danceability"
+                color="black"
+                data={songs}
+                selected={ plotKeyName === "danceability" ? true : false}
+                icon="🕺"
+                onClick={() => {
+                  setPlotKeyName("danceability");
+                }}
+              />
 
-            <MetricComponent
-              title="Speechiness"
-              color="black"
-              data={songs}
-              icon="🗣"
-              onClick={() => {
-                setPlotKeyName("speechiness");
-              }}
-            />
+              <MetricComponent
+                title="Speechiness"
+                color="black"
+                data={songs}
+                selected={ plotKeyName === "speechiness" ? true : false}
+                icon="🗣"
+                onClick={() => {
+                  setPlotKeyName("speechiness");
+                }}
+              />
 
-            <MetricComponent
-              title="Instrumentalness"
-              color="black"
-              data={songs}
-              icon="🎻"
-              onClick={() => {
-                setPlotKeyName("instrumentalness");
-              }}
-            />
+              <MetricComponent
+                title="Instrumentalness"
+                color="black"
+                data={songs}
+                selected={ plotKeyName === "instrumentalness" ? true : false}
+                icon="🎻"
+                onClick={() => {
+                  setPlotKeyName("instrumentalness");
+                }}
+              />
+            </div>
+
+            {/* <PlotComponentScatterPlot data={songs.slice(0, 10)} /> */}
+            <PlotSongBubbles data={songs.slice(0, 10)} key_name={plotKeyName} />
           </div>
-
-          {/* <PlotComponentScatterPlot data={songs.slice(0, 10)} /> */}
-          <PlotSongBubbles data={songs.slice(0, 10)} key_name={plotKeyName} />
         </div>
       </div>
 
@@ -388,9 +393,9 @@ function App() {
       />
 
       {/* {isSignedIn ? <DownloadDataButton data={songs} /> : <></>} */}
-      <GenerateSocialMediaPostButton 
+      <GenerateSocialMediaPostButton
         song={currentSong}
-        songs={songs} 
+        songs={songs}
         username={userData?.display_name}
         timeRange={timeRange}
         currentItemId={currentItemId ? currentItemId : 0}

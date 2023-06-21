@@ -96,6 +96,59 @@ body {
   gap: 2px;
   font-size: 10px; }
 
+.plotContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: row;
+  gap: 10px;
+  width: 90vw;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(1000px);
+  padding: 1rem;
+  border-radius: 1rem;
+  color: white;
+  animation: fade-in 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out; }
+
+.legend {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  width: 200px;
+  height: auto;
+  border-radius: 0.6rem;
+  background-color: rgba(255, 255, 255, 0.5); }
+
+.legend-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+  color: black; }
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: black;
+  border: 1px solid black; }
+
+.legend-text {
+  font-size: 12px;
+  width: 140px;
+  height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
+
 .plotsModal {
   width: 100vw;
   height: 100vh;
@@ -116,13 +169,12 @@ body {
 
 .metricsContainer {
   position: absolute;
-  top: 25%;
-  left: 5%;
-  width: 100%;
+  top: 20px;
+  left: 20px;
   height: auto;
   display: flex;
   flex-direction: column;
-  gap: 40px; }
+  gap: 10px; }
 
 .metric {
   width: 200px;
@@ -130,19 +182,33 @@ body {
   flex-direction: column;
   padding: 10px;
   gap: 10px;
-  border-radius: 1rem; }
-
-.metric:hover {
-  cursor: pointer;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 0.6rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(1000px);
   transition: 0.2s ease;
-  backdrop-filter: blur(100px);
+  color: white;
   fill: white; }
-  .metric:hover .circle {
+  .metric .circle {
     stroke: white; }
-  .metric:hover .circle-bg {
+  .metric .circle-bg {
     stroke: rgba(255, 255, 255, 0.4); }
+  .metric:hover {
+    cursor: pointer;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.9);
+    fill: white; }
+    .metric:hover .circle {
+      stroke: white; }
+    .metric:hover .circle-bg {
+      stroke: rgba(255, 255, 255, 0.4); }
+  .metric.selected {
+    color: black;
+    background-color: rgba(28, 185, 85, 0.9);
+    fill: black; }
+    .metric.selected .circle {
+      stroke: black; }
+    .metric.selected .circle-bg {
+      stroke: rgba(0, 0, 0, 0.4); }
 
 .loading_overlay {
   width: 100vw;

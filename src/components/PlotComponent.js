@@ -10,13 +10,13 @@ import * as Plot from "@observablehq/plot";
 import addTooltips from "../tooltip.js";
 
 const PlotSongBubbles = (props) => {
-    
+
     const containerRef = useRef();
     const data = props.data;
     const key_name = props.key_name;
 
     // console.log(data.map((d) => d.popularity));
-        
+
     useEffect(() => {
         if (data === undefined) return;
         try {
@@ -36,7 +36,9 @@ const PlotSongBubbles = (props) => {
                         x: (d) => (d.popularity),
                         y: (d) => (d.audio_features[key_name] * 100),
                         fill: (d) => d.bg_color,
+                        stroke: (d) => d.bg_color,
                         r: 20,
+                        title: (d) => `${d.name} - ${d.artist} \n ${capitalizeFirstLetter(key_name)}: ${Math.round(d.audio_features[key_name] * 100)} % \n Popularity: ${Math.round(d.popularity)} %`,
                     }),
                 ],
                 x: {
@@ -51,7 +53,7 @@ const PlotSongBubbles = (props) => {
                 width: 700,
                 height: 500,
                 style: {
-                    background: "rgba(0, 0, 0, 0.4)",
+                    background: "rgba(255, 255, 255 , 0.1)",
                     backdropFilter: "blur(1000px)",
                     padding: "1rem",
                     borderRadius: "1rem",
@@ -61,7 +63,7 @@ const PlotSongBubbles = (props) => {
                 },
                 tip: "xy"
             });
-        
+
             containerRef.current.append(addTooltips(plot));
             return () => plot.remove();
         } catch (error) {
@@ -74,8 +76,19 @@ const PlotSongBubbles = (props) => {
     }
     return (
         <>
-        <h2>{capitalizeFirstLetter(props.key_name)}</h2>
-        <div ref={containerRef} />
+            {/* <h2>{capitalizeFirstLetter(props.key_name)}</h2> */}
+            {/* <div className="plotContainer"> */}
+                <div ref={containerRef} />
+                <div className="legend">
+                    {props.data.map((d) => (
+                        <div className="legend-item">
+                            <div className="legend-color" style={{ backgroundColor: d.bg_color }}></div>
+                            <span className="legend-text">{d.name}</span>
+                            {/* <div className="legend-text">{d.artist}</div> */}
+                        </div>
+                    ))}
+                </div>
+            {/* </div> */}
         </>
     );
 }
@@ -99,14 +112,6 @@ export const MetricComponent = (props) => {
             const mean = (arr) => {
                 return arr.reduce((x, y) => x + y) / arr.length
             }
-            
-            // console.log(props.title.toLowerCase());
-
-            // console.log(props.data[0].audio_features[props.title.toLowerCase()]);   
-
-            // console.log(props.data.slice(0, 10).map(
-                // (d) => d.audio_features[props.title.toLowerCase()] * 100
-            // ));
 
             const avg = mean(props.data.slice(0, 10).map(
                 (d) => d.audio_features[props.title.toLowerCase()] * 100
@@ -120,7 +125,8 @@ export const MetricComponent = (props) => {
                 const pct = ((100 - p) / 100) * c;
 
                 return (
-                    <div className="metric" onClick={props.onClick}>
+                    <div className={"metric" + (props.selected ? " selected" : "")}
+                     onClick={props.onClick}>
                         <h3>{props.title}</h3>
                         {/* <h4>{props.icon}</h4> */}
                         <svg height={r * 2 + 10} width={r * 2 + 10}>
@@ -176,4 +182,4 @@ export const MetricComponent = (props) => {
     return plot;
 }
 
-export {PlotSongBubbles };
+export { PlotSongBubbles };
