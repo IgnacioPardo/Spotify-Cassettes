@@ -33,6 +33,110 @@ body {
   transition: 0.2s ease;
 }
 
+.cassetteAnatomy{
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  transition: 0.2s ease;
+  z-index: 10000;
+
+  .text {
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+      position: absolute;
+      font-family: "Permanent Marker", cursive;
+      font-size: 26px;
+      z-index: 1000000;
+      transform: translate3d(0, 0, 10vw);
+      .follow_arrow{
+        width: 100px;
+      }
+    }
+
+  .name{
+    position: absolute;
+    top: 240px;
+    left: 300px;
+    .follow_arrow {
+        // width: 160px;
+        margin-top: 20px;
+      }
+  }
+  .artist{
+    align-items: flex-start;
+    position: absolute;
+    top: 320px;
+    left: 200px;
+    gap: 10px;
+    .follow_arrow {
+        // width: 160px;
+        margin-top: 20px;
+      }
+  }
+  .colors{
+    position: absolute;
+    top: 400px;
+    right: 180px;
+  }
+  .material{
+    align-items: flex-end;
+    position: absolute;
+    bottom: 200px;
+    right: 400px;
+  }
+  .brand{
+    position: absolute;
+    bottom: 300px;
+    left: 300px;
+  }
+  .key{
+    position: absolute;
+    top: 240px;
+    right: 400px;
+    gap: 10px;
+  }
+  .tempo{
+    align-items: flex-end;
+    gap: 10px;
+    position: absolute;
+    bottom: 200px;
+    left: 400px;
+    .follow_arrow {
+        width: 160px;
+        margin-bottom: 20px;
+      }
+  }
+}
+
+.cassetteAnatomyContent{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+
+  .cassette-scene,
+    .shadow-scene{
+      transform: perspective(10000px) rotateX(90deg) rotateZ(0deg) translateZ(-8vw) translateX(-22vw) translateY(0vw) scale3d(1.4, 1.4, 1.4) !important;
+      &:hover{
+        transform: perspective(10000px) rotateX(80deg) rotateZ(30deg) translateZ(-8vw) translateX(-6vw) translateY(20vw) scale3d(1.4, 1.4, 1.4) !important;
+      }
+    }
+    .shadow-scene{
+      opacity: 0;
+    }
+}
+
 .social_media_post_btns{
   position: absolute;
   right: 80px;

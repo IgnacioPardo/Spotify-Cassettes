@@ -16,6 +16,87 @@ body {
   background-color: #4cb8f5;
   transition: 0.2s ease; }
 
+.cassetteAnatomy {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  transition: 0.2s ease;
+  z-index: 10000; }
+  .cassetteAnatomy .text {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: absolute;
+    font-family: "Permanent Marker", cursive;
+    font-size: 26px;
+    z-index: 1000000;
+    transform: translate3d(0, 0, 10vw); }
+    .cassetteAnatomy .text .follow_arrow {
+      width: 100px; }
+  .cassetteAnatomy .name {
+    position: absolute;
+    top: 240px;
+    left: 300px; }
+    .cassetteAnatomy .name .follow_arrow {
+      margin-top: 20px; }
+  .cassetteAnatomy .artist {
+    align-items: flex-start;
+    position: absolute;
+    top: 320px;
+    left: 200px;
+    gap: 10px; }
+    .cassetteAnatomy .artist .follow_arrow {
+      margin-top: 20px; }
+  .cassetteAnatomy .colors {
+    position: absolute;
+    top: 400px;
+    right: 180px; }
+  .cassetteAnatomy .material {
+    align-items: flex-end;
+    position: absolute;
+    bottom: 200px;
+    right: 400px; }
+  .cassetteAnatomy .brand {
+    position: absolute;
+    bottom: 300px;
+    left: 300px; }
+  .cassetteAnatomy .key {
+    position: absolute;
+    top: 240px;
+    right: 400px;
+    gap: 10px; }
+  .cassetteAnatomy .tempo {
+    align-items: flex-end;
+    gap: 10px;
+    position: absolute;
+    bottom: 200px;
+    left: 400px; }
+    .cassetteAnatomy .tempo .follow_arrow {
+      width: 160px;
+      margin-bottom: 20px; }
+
+.cassetteAnatomyContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh; }
+  .cassetteAnatomyContent .cassette-scene,
+  .cassetteAnatomyContent .shadow-scene {
+    transform: perspective(10000px) rotateX(90deg) rotateZ(0deg) translateZ(-8vw) translateX(-22vw) translateY(0vw) scale3d(1.4, 1.4, 1.4) !important; }
+    .cassetteAnatomyContent .cassette-scene:hover,
+    .cassetteAnatomyContent .shadow-scene:hover {
+      transform: perspective(10000px) rotateX(80deg) rotateZ(30deg) translateZ(-8vw) translateX(-6vw) translateY(20vw) scale3d(1.4, 1.4, 1.4) !important; }
+  .cassetteAnatomyContent .shadow-scene {
+    opacity: 0; }
+
 .social_media_post_btns {
   position: absolute;
   right: 80px;

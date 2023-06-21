@@ -12,7 +12,6 @@ export const GenerateSocialMediaPostButton = (props) => {
     const [post, setPost] = useState();
 
     const [image, setImage] = useState();
-    const [showBtns, setShowBtns] = useState(false);
 
     useEffect(() => {
         if (props.songs === undefined) return;
@@ -56,8 +55,8 @@ export const GenerateSocialMediaPostButton = (props) => {
         <>
             <div className="social_media_post_container" ref={postContainerRef}
                 style={{
-                    display: showBtns ? "flex" : "none",
-                    backgroundColor: showBtns ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0)",
+                    display: props.showingSocial ? "flex" : "none",
+                    backgroundColor: props.showingSocial ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0)",
                 }}>
 
                 <div className="social_media_post"
@@ -100,8 +99,8 @@ export const GenerateSocialMediaPostButton = (props) => {
             <div
                 className="social_media_post_btns"
                 style={{
-                    display: showBtns ? "flex" : "none",
-                    opacity: showBtns ? 1 : 0,
+                    display: props.showingSocial ? "flex" : "none",
+                    opacity: props.showingSocial ? 1 : 0,
                 }}
             >
                 <button
@@ -146,7 +145,7 @@ export const GenerateSocialMediaPostButton = (props) => {
                         // Make social media post invisible
                         postRef.current.style.display = "none";
                         props.setIsLoading(false);
-                        setShowBtns(false);
+                        props.setShowingSocial(false);
                     }}
                 >
                     􀃰
@@ -157,7 +156,7 @@ export const GenerateSocialMediaPostButton = (props) => {
                 className="social_gen_btn round_btn"
                 onClick={(e) => {
                     e.preventDefault();
-
+                    props.setShowAnatomy(false);
                     // Make social media post visible
                     props.setIsLoading(true);
 
@@ -174,7 +173,7 @@ export const GenerateSocialMediaPostButton = (props) => {
                             // link.click()
 
                             setImage(dataUrl);
-                            setShowBtns(true);
+                            props.setShowingSocial(true);
                         })
                         .catch((error) => {
                             console.error('oops, something went wrong!', error);
@@ -185,7 +184,7 @@ export const GenerateSocialMediaPostButton = (props) => {
                     top: "45%",
                     right: "40px",
                     zIndex: "100",
-                    display: showBtns ? "none" : "",
+                    display: props.showingSocial || props.isLoading ? "none" : "",
                 }}
             >
                 􀣵

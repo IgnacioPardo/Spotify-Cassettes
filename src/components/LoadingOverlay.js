@@ -1,6 +1,6 @@
 import React from "react";
 
-export const LoadingOverlay = ({ isLoading }) => {
+export const LoadingOverlay = ({ isLoading, showAnatomy }) => {
   return <div
     className="loading_overlay"
     style={{
@@ -11,7 +11,7 @@ export const LoadingOverlay = ({ isLoading }) => {
     <div
       className="loading_anim"
       style={{
-        opacity: isLoading ? "1" : "0",
+        opacity: (isLoading && !showAnatomy) ? "1" : "0",
       }}
     >
       <div className="loading_anim_inner"></div>

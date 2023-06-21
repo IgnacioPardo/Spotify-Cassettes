@@ -2,6 +2,7 @@ import "./App.css";
 import React, { useState, useEffect } from "react";
 
 import CassetteGallery from "./components/CassetteGallery.js";
+import { CassetteAnatomy } from "./components/CassetteAnatomy.js";
 
 import { MenuBar } from "./components/MenuBar.js";
 import { SongInfoDisplay } from "./components/SongInfoDisplay.js";
@@ -51,6 +52,9 @@ function App() {
   const [showPlots, setShowPlots] = useState(false);
   const [plotKeyName, setPlotKeyName] = useState("danceability");
 
+  const [showAnatomy, setShowAnatomy] = useState(true);
+  const [showingSocial, setShowingSocial] = useState(false);
+
   var searchParams = new URLSearchParams(window.location.search);
 
   const handleScroll = (event) => {
@@ -62,7 +66,7 @@ function App() {
 
   useEffect(() => {
     setTimeout(() => {
-      setIsLoading(false);
+      //setIsLoading(false);
     }, 1100);
   }, [songs]);
 
@@ -324,7 +328,7 @@ function App() {
                 title="Danceability"
                 color="black"
                 data={songs}
-                selected={ plotKeyName === "danceability" ? true : false}
+                selected={plotKeyName === "danceability" ? true : false}
                 icon="🕺"
                 onClick={() => {
                   setPlotKeyName("danceability");
@@ -335,7 +339,7 @@ function App() {
                 title="Speechiness"
                 color="black"
                 data={songs}
-                selected={ plotKeyName === "speechiness" ? true : false}
+                selected={plotKeyName === "speechiness" ? true : false}
                 icon="🗣"
                 onClick={() => {
                   setPlotKeyName("speechiness");
@@ -346,7 +350,7 @@ function App() {
                 title="Instrumentalness"
                 color="black"
                 data={songs}
-                selected={ plotKeyName === "instrumentalness" ? true : false}
+                selected={plotKeyName === "instrumentalness" ? true : false}
                 icon="🎻"
                 onClick={() => {
                   setPlotKeyName("instrumentalness");
@@ -360,7 +364,20 @@ function App() {
         </div>
       </div>
 
-      <LoadingOverlay isLoading={isLoading} />
+      <CassetteAnatomy
+        song={currentSong}
+        songs={songs}
+        username={userData?.display_name}
+        timeRange={timeRange}
+        setIsLoading={setIsLoading}
+        setShowAnatomy={setShowAnatomy}
+        showAnatomy={showAnatomy}
+      />
+
+      <LoadingOverlay 
+        isLoading={isLoading} 
+        showAnatomy={showAnatomy}
+      />
 
       <CassetteGallery
         songs={songs}
@@ -400,7 +417,29 @@ function App() {
         timeRange={timeRange}
         currentItemId={currentItemId ? currentItemId : 0}
         setIsLoading={setIsLoading}
+        isLoading={isLoading}
+        setShowAnatomy={setShowAnatomy}
+        showingSocial={showingSocial}
+        setShowingSocial={setShowingSocial}
       />
+
+      <button className="open_anatomy round_btn" onClick={() => {
+        setShowAnatomy(true);
+        setIsLoading(true);
+        setShowingSocial(false);
+      }}
+        style={{
+          display: showAnatomy ? "none" : "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          position: "absolute",
+          bottom: "40px",
+          right: "40px",
+        }}
+      >
+        􀯏
+      </button>
     </div>
   );
 }
