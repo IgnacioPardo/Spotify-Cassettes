@@ -28,6 +28,65 @@ body {
   height: 100vh;
   transition: 0.2s ease;
   z-index: 10000; }
+  .cassetteAnatomy .anatomy-label:hover .tooltip {
+    opacity: 1; }
+    .cassetteAnatomy .anatomy-label:hover .tooltip.left {
+      transform: perspective(10000px) rotateX(-10deg) rotateZ(-10deg) translateZ(0vw) translateX(0vw) translateY(0vw) scale3d(1, 1, 1) !important;
+      left: -100px; }
+    .cassetteAnatomy .anatomy-label:hover .tooltip.right {
+      transform: perspective(10000px) rotateX(10deg) rotateZ(10deg) translateZ(0vw) translateX(0vw) translateY(0vw) scale3d(1, 1, 1) !important;
+      right: -100px; }
+    .cassetteAnatomy .anatomy-label:hover .tooltip.bottom {
+      bottom: -100px; }
+  .cassetteAnatomy .anatomy-label .tooltip {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+    font-size: 14px;
+    font-family: "Inter", sans-serif;
+    font-weight: 900;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    max-width: 400px;
+    padding: 10px;
+    background-color: #1CB955;
+    border-radius: 10px;
+    transition: all 1s ease; }
+    .cassetteAnatomy .anatomy-label .tooltip .artwork_cover {
+      width: 30%;
+      border-radius: 10px;
+      overflow: hidden; }
+      .cassetteAnatomy .anatomy-label .tooltip .artwork_cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; }
+    .cassetteAnatomy .anatomy-label .tooltip.top {
+      top: -50px; }
+    .cassetteAnatomy .anatomy-label .tooltip.bottom {
+      bottom: -50px; }
+    .cassetteAnatomy .anatomy-label .tooltip.left {
+      left: 0px; }
+    .cassetteAnatomy .anatomy-label .tooltip.right {
+      right: 0px; }
+    .cassetteAnatomy .anatomy-label .tooltip .artwork_pallette {
+      height: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 5px;
+      margin-right: 5px;
+      padding: 5px;
+      border-radius: 5px;
+      background-color: #ffffff;
+      border: 1px solid #0b0b0d; }
+      .cassetteAnatomy .anatomy-label .tooltip .artwork_pallette .artwork_pallette_color {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #ffffff;
+        border: 1px solid #0b0b0d; }
   .cassetteAnatomy .text {
     display: flex;
     justify-content: center;
@@ -551,7 +610,8 @@ a {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
-  flex-direction: column; }
+  flex-direction: column;
+  z-index: 1000000000000; }
 
 #cassette-gallery {
   width: 100vw;

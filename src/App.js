@@ -367,6 +367,7 @@ function App() {
       <CassetteAnatomy
         song={currentSong}
         songs={songs}
+        currentItemId={currentItemId ? currentItemId : 0}
         username={userData?.display_name}
         timeRange={timeRange}
         setIsLoading={setIsLoading}

@@ -14,8 +14,7 @@ const PlotSongBubbles = (props) => {
     const containerRef = useRef();
     const data = props.data;
     const key_name = props.key_name;
-
-    // console.log(data.map((d) => d.popularity));
+    const [topValue, setTopValue] = useState(100);
 
     useEffect(() => {
         if (data === undefined) return;
@@ -29,6 +28,9 @@ const PlotSongBubbles = (props) => {
                 }
             }
 
+            // console.log(
+            //     data.map((d) => d.popularity)
+            // )
             // El radio es en función de la popularidad
             const plot = Plot.plot({
                 marks: [
@@ -38,17 +40,22 @@ const PlotSongBubbles = (props) => {
                         fill: (d) => d.bg_color,
                         stroke: (d) => d.bg_color,
                         r: 20,
-                        title: (d) => `${d.name} - ${d.artist} \n ${capitalizeFirstLetter(key_name)}: ${Math.round(d.audio_features[key_name] * 100)} % \n Popularity: ${Math.round(d.popularity)} %`,
+                        title: (d) => `${d.name} - ${d.artist} \n ${capitalizeFirstLetter(key_name)}: ${(d.audio_features[key_name] * 100)} % \n Popularity: ${(d.popularity)} %`,
                     }),
                 ],
                 x: {
                     label: "Popularity",
-                    transform: (x) => `${Math.round(x)} %`
+                    // Set range to 0-100
+                    domain: [-10, 110],
                 },
                 y: {
                     label: props.key_name,
-                    transform: (x) => `${Math.round(x)} %`,
-                    // domain: [0, 100],
+                    //transform: (x) => `${Math.round(x)} %`,
+                    // If most of the data is in the 0-1 range, set the domain to 0-1
+                    
+                    // domain: [0, topValue],
+                    // Lowest possible value is data min audio feature value
+                    domain: [Math.min(...data.map((d) => d.audio_features[key_name] * 100)), topValue],
                 },
                 width: 700,
                 height: 500,
@@ -69,7 +76,7 @@ const PlotSongBubbles = (props) => {
         } catch (error) {
             console.log(error);
         }
-    }, [data, props.key_name, props.data, key_name]);
+    }, [data, props.key_name, props.data, key_name, topValue]);
 
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -78,15 +85,27 @@ const PlotSongBubbles = (props) => {
         <>
             {/* <h2>{capitalizeFirstLetter(props.key_name)}</h2> */}
             {/* <div className="plotContainer"> */}
-                <div ref={containerRef} />
+                <div ref={containerRef} 
+                    style={{
+                        // Wrap container in a div to prevent the plot from overflowing
+                        overflow: "hidden",
+                    }}
+                />
                 <div className="legend">
                     {props.data.map((d) => (
-                        <div className="legend-item">
+                        <div className="legend-item" key={d.id}>
                             <div className="legend-color" style={{ backgroundColor: d.bg_color }}></div>
                             <span className="legend-text">{d.name}</span>
                             {/* <div className="legend-text">{d.artist}</div> */}
+
+                            {/* Input slider to set topValue */}
                         </div>
                     ))}
+                    <br></br>
+                    <span className="adjust-text"
+                        style={{ color: "black", fontSize: "0.8rem" }}
+                    >Adjust the the Y-Axis</span>
+                    <input type="range" min="0.005" max="100" value={topValue} onChange={(e) => setTopValue(e.target.value)} />
                 </div>
             {/* </div> */}
         </>

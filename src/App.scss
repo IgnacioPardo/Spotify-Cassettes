@@ -46,6 +46,112 @@ body {
   transition: 0.2s ease;
   z-index: 10000;
 
+  
+
+
+  .anatomy-label{
+
+    &:hover{
+      
+      .tooltip{
+        opacity: 1;
+        // Skew the tooltip to the left
+        
+        &.left{
+          transform: perspective(10000px) rotateX(-10deg) rotateZ(-10deg) translateZ(0vw) translateX(0vw) translateY(0vw) scale3d(1, 1, 1) !important;
+          left: -100px;
+        }
+        
+        &.right{
+          transform: perspective(10000px) rotateX(10deg) rotateZ(10deg) translateZ(0vw) translateX(0vw) translateY(0vw) scale3d(1, 1, 1) !important;
+          right: -100px;
+        }
+
+        &.bottom{
+          bottom: -100px;
+        }
+      }
+
+    }
+
+    .tooltip {
+      opacity: 0;
+      transform: translate3d(0, 0, 0);
+      font-size: 14px;
+      font-family: "Inter", sans-serif;
+      font-weight: 900;
+
+      position: absolute;
+
+      .artwork_cover{
+        width: 30%;
+        border-radius: 10px;
+        overflow: hidden;
+
+        img{
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+      
+      &.top{
+        top: -50px;
+      }
+
+      &.bottom{
+        bottom: -50px;
+      }
+
+      &.left{
+        left: 0px;
+      }
+
+      &.right{
+        right: 0px;
+      }
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+
+      // width: 400px;
+      max-width: 400px;
+      // height: 40px;
+
+      padding: 10px;
+      background-color: $spotify-green;
+      border-radius: 10px;
+
+      transition: all 1s ease;
+
+      .artwork_pallette{
+        height: 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 5px;
+        margin-right: 5px;
+
+        padding: 5px;
+        border-radius: 5px;
+        background-color: $white-0; 
+        border: 1px solid $black-1;
+
+        .artwork_pallette_color{
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color: $white-0;
+          border: 1px solid $black-1;
+        }
+      }
+    }
+
+  }
+
+
   .text {
 
     display: flex;
@@ -713,6 +819,8 @@ a {
     justify-content: flex-start;
     align-items: flex-start;
     flex-direction: column;
+
+    z-index: 1000000000000;
 
 }
 
