@@ -249,7 +249,8 @@ body {
   border-radius: 1rem;
   color: white;
   animation: fade-in 0.5s ease-in-out;
-  transition: all 0.5s ease-in-out; }
+  transition: all 0.5s ease-in-out;
+  transform: translateZ(200px); }
 
 .legend {
   position: absolute;
@@ -356,7 +357,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1000;
+  z-index: 1000 !important;
   display: flex;
   justify-content: center;
   align-items: center;
