@@ -66,9 +66,10 @@ function App() {
 
   useEffect(() => {
     setTimeout(() => {
-      //setIsLoading(false);
-    }, 1100);
-  }, [songs]);
+      setIsLoading(false);
+      setShowAnatomy(false);
+    }, 2000);
+  }, [songs, timeRange]);
 
   useEffect(() => {
     // Fetch user data
