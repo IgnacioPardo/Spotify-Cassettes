@@ -4,6 +4,7 @@ export const LoadingOverlay = ({ isLoading, showAnatomy }) => {
   return <div
     className="loading_overlay"
     style={{
+      display: isLoading ? "flex" : "none",
       opacity: isLoading ? "1" : "0",
       zIndex: isLoading ? "1" : "-1",
     }}

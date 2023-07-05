@@ -1,8 +1,9 @@
 import React from "react";
 import spotifyLogo from "./icons/spotify.svg";
 import { TimeRangeSelector } from "./TimeRangeSelector.js";
+import { stopCassette } from "./stopCassette.js";
 
-export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoading, displayUserData, showPlots, setShowPlots }) => {
+export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoading, displayUserData, showPlots, setShowPlots, setControlAction }) => {
   return (
   <div className="menu" style={{
     opacity: isLoading ? "0" : "1",
@@ -12,7 +13,14 @@ export const MenuBar = ({ isSignedIn, setTimeRange, timeRange, userData, isLoadi
       <div
         className={showPlots ? "menu_btn active" : "menu_btn"}
         onClick={() => {
-          setShowPlots(!showPlots);
+          // Stop playing cassette if it's playing, wait 1 second for it to stop, then show plots
+
+          if (!showPlots)
+            stopCassette(setControlAction);
+
+          setTimeout(() => {
+            setShowPlots(!showPlots);
+          }, showPlots ? 0 : 500);
         }}
       >
         {!showPlots ? "􀜋" : "􀁡"}

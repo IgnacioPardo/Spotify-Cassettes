@@ -244,7 +244,6 @@ body {
   gap: 10px;
   width: 90vw;
   background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(1000px);
   padding: 1rem;
   border-radius: 1rem;
   color: white;
@@ -296,8 +295,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1000;
-  backdrop-filter: blur(10px); }
+  z-index: 1000; }
 
 .plotsModalContent {
   width: 100vw;
@@ -325,7 +323,6 @@ body {
   gap: 10px;
   border-radius: 0.6rem;
   background-color: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(1000px);
   transition: 0.2s ease;
   color: white;
   fill: white; }

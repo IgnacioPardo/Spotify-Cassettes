@@ -17,10 +17,7 @@ import { handleAccessTokenError } from "./handleAccessTokenError.js";
 
 import defaultSongs from "./data/cassettes.json";
 
-import {
-  PlotSongBubbles,
-  MetricComponent,
-} from "./components/PlotComponent.js";
+import { PlotModal } from "./PlotModal.js";
 
 var last = JSON.parse(JSON.stringify(defaultSongs.at(-1)));
 defaultSongs.push(last);
@@ -150,6 +147,10 @@ function App() {
   }, [userTopTracks]);
 
   useEffect(() => {
+    if (controlAction === "") {
+      return;
+    }
+
     let audio = document.querySelector("#musicPlayer");
     let playPromise;
     if (controlAction === "play_pause") {
@@ -163,11 +164,15 @@ function App() {
     } else if (controlAction === "stop") {
       setControlAction("");
       setScrollShift(-8);
+      
       var playingCassette = document.querySelector(".cassette.playing");
-      // console.log(playingCassette);
       if (playingCassette) {
-        playingCassette.click();
+       console.log(playingCassette);
+       // Perform a click on the cassette to stop it
+       console.log(playingCassette.querySelector(".clickable-cassette-shutdown"));        
+       playingCassette.querySelector(".clickable-cassette-shutdown").click();
       }
+      
       audio.pause();
       audio.currentTime = 0;
       setCurrentSongTime(0);
@@ -305,6 +310,7 @@ function App() {
         displayUserData={displayUserData}
         showPlots={showPlots}
         setShowPlots={setShowPlots}
+        setControlAction={setControlAction}
       />
 
       <SongInfoDisplay
@@ -318,52 +324,13 @@ function App() {
         setCurrentSongDuration={setCurrentSongDuration}
       />
 
-      <div
-        className="plotsModal"
-        style={{ display: showPlots ? "flex" : "none" }}
-      >
-        <div className="plotsModalContent">
-          <div className="plotContainer">
-            <div className="metricsContainer">
-              <MetricComponent
-                title="Danceability"
-                color="black"
-                data={songs}
-                selected={plotKeyName === "danceability" ? true : false}
-                icon="🕺"
-                onClick={() => {
-                  setPlotKeyName("danceability");
-                }}
-              />
-
-              <MetricComponent
-                title="Speechiness"
-                color="black"
-                data={songs}
-                selected={plotKeyName === "speechiness" ? true : false}
-                icon="🗣"
-                onClick={() => {
-                  setPlotKeyName("speechiness");
-                }}
-              />
-
-              <MetricComponent
-                title="Instrumentalness"
-                color="black"
-                data={songs}
-                selected={plotKeyName === "instrumentalness" ? true : false}
-                icon="🎻"
-                onClick={() => {
-                  setPlotKeyName("instrumentalness");
-                }}
-              />
-            </div>
-
-            {/* <PlotComponentScatterPlot data={songs.slice(0, 10)} /> */}
-            <PlotSongBubbles data={songs.slice(0, 10)} key_name={plotKeyName} />
-          </div>
-        </div>
-      </div>
+      <PlotModal
+        showPlots={showPlots}
+        songs={songs}
+        plotKeyName={plotKeyName}
+        setPlotKeyName={setPlotKeyName}
+        setControlAction={setControlAction}
+     />
 
       <CassetteAnatomy
         song={currentSong}

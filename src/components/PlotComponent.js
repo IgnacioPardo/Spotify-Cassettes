@@ -61,7 +61,7 @@ const PlotSongBubbles = (props) => {
                 height: 500,
                 style: {
                     background: "rgba(255, 255, 255 , 0.1)",
-                    backdropFilter: "blur(1000px)",
+                    // backdropFilter: "blur(1000px)",
                     padding: "1rem",
                     borderRadius: "1rem",
                     color: "white",

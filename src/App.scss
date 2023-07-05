@@ -340,14 +340,14 @@ body {
   gap: 10px;
   width: 90vw;
   background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(1000px);
   padding: 1rem;
   border-radius: 1rem;
   color: white;
   animation: fade-in 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
-
+  
   transform: translateZ(200px);
+  // backdrop-filter: blur(1000px);
 }
 
 .legend {
@@ -401,7 +401,7 @@ body {
   left: 0;
   z-index: 1000;
 
-  backdrop-filter: blur(10px);
+  // backdrop-filter: blur(1px);
 }
 
 .plotsModalContent{
@@ -440,7 +440,7 @@ body {
   gap: 10px;
   border-radius: 0.6rem;
   background-color: rgba(black, 0.2);
-  backdrop-filter: blur(1000px);
+  // backdrop-filter: blur(1000px);
   transition: 0.2s ease;
   color: white;
   fill: white;

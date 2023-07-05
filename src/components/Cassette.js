@@ -25,7 +25,6 @@ export const Cassette = (props) => {
   var shift = song.id - 1 + props.shift;
 
   useEffect(() => {
-
     var shades = [];
 
     //select all by data-shade
@@ -33,7 +32,7 @@ export const Cassette = (props) => {
       shades.push(el.getAttribute("data-shade"));
     });
 
-    shades = shades.slice(0, shades.length - 1)
+    shades = shades.slice(0, shades.length - 1);
 
     // if shade is quantile 0-0.25, set to translucent
     // if shade is quantile 0.25-0.5, set to white
@@ -48,18 +47,15 @@ export const Cassette = (props) => {
       setIsTranslucent(true);
       setIsWhite(false);
       setIsSpotifyGreen(false);
-    }
-    else if (shade_quantile < 0.5) {
+    } else if (shade_quantile < 0.5) {
       setIsTranslucent(false);
       setIsWhite(true);
       setIsSpotifyGreen(false);
-    }
-    else if (shade_quantile < 0.9) {
+    } else if (shade_quantile < 0.9) {
       setIsTranslucent(false);
       setIsWhite(false);
       setIsSpotifyGreen(false);
-    }
-    else {
+    } else {
       setIsTranslucent(false);
       setIsWhite(false);
       setIsSpotifyGreen(true);
@@ -71,15 +67,12 @@ export const Cassette = (props) => {
     //   setIsSpotifyGreen(false);
     // }
 
-
     /* 
     console.log({
       shade: shade,
       shade_quantile: shade_quantile,
       shades: shades,
     }) */
-   
-   
   }, [shade, props.timeRange]);
 
   useEffect(() => {
@@ -87,7 +80,9 @@ export const Cassette = (props) => {
       setReelSpeed((100 / song.audio_features.tempo) * 2);
       setSongKey(noteByKey(song.audio_features.key));
 
-      setShade(song.audio_features.instrumentalness + song.audio_features.speechiness);
+      setShade(
+        song.audio_features.instrumentalness + song.audio_features.speechiness
+      );
     }
 
     if (song.calc_palette) {
@@ -127,7 +122,7 @@ export const Cassette = (props) => {
             var my_shade =
               song.audio_features.instrumentalness +
               song.audio_features.speechiness;
-            
+
             setShade(my_shade);
           }
         );
@@ -196,8 +191,8 @@ export const Cassette = (props) => {
       <div
         className={["cassette", isPlaying ? "playing" : ""].join(" ")}
         style={{
-          transform : 
-              props.isModalOpen ? `translate3d(0, 0, 0) rotateX(0deg) rotateZ(0deg) rotateY(0deg) translateZ(-1000px)`
+          transform: props.isModalOpen
+            ? `translate3d(0, 0, 0) rotateX(0deg) rotateZ(0deg) rotateY(0deg) translateZ(-1000px)`
             : `translate3d(${shift * -100}px, ${shift * 10}px, 0)`,
           transition: "transform 0.2s ease-in-out",
           //filter: playerPlaying ? isPlaying || hover ? "none" : "blur(4px)" : "none",
@@ -221,7 +216,16 @@ export const Cassette = (props) => {
         aria-checked={isPlaying}
         data-shade={shade}
       >
-        <div className="shadow-scene"
+        <div
+          className="clickable-cassette-shutdown"
+          onClick={() => {
+            setIsPlaying(false);
+          }}
+          style={{ opacity: 0, pointerEvents: "none", width: 0, height: 0 }}
+        ></div>
+
+        <div
+          className="shadow-scene"
           style={{
             display: props.isPosing ? "none" : "",
           }}
@@ -256,9 +260,10 @@ export const Cassette = (props) => {
             isWhite ? "white-cassette" : "",
           ].join(" ")}
           style={{
-            transform: 
-             props.isPosing ? "perspective(10000px) rotateX(85deg) rotateZ(390deg) translateZ(-220px) translateY(120px) translateX(-70px) rotateY(0deg) scale3d(0.8, 0.8, 0.8)"
-            :  isPlaying ? `perspective(10000px) rotateX(85deg) rotateZ(390deg) translateZ(24vw) rotateY(0deg) scale3d(1.4, 1.4, 1.4)`
+            transform: props.isPosing
+              ? "perspective(10000px) rotateX(85deg) rotateZ(390deg) translateZ(-220px) translateY(120px) translateX(-70px) rotateY(0deg) scale3d(0.8, 0.8, 0.8)"
+              : isPlaying
+              ? `perspective(10000px) rotateX(85deg) rotateZ(390deg) translateZ(24vw) rotateY(0deg) scale3d(1.4, 1.4, 1.4)`
               : `perspective(10000px) rotateX(80deg) rotateZ(40deg) translateZ(${
                   hover ? 4 : 0
                 }vw)`,
@@ -266,7 +271,8 @@ export const Cassette = (props) => {
         >
           <div className="cassette-shape">
             <div className="case-scene">
-              <div className="ft face"
+              <div
+                className="ft face"
                 style={{
                   backgroundColor: props.isPosing ? "black" : "",
                   // border: props.isPosing ? "none" : "",
@@ -287,8 +293,7 @@ export const Cassette = (props) => {
                       })
                     ) : (
                       <>
-                      {
-                        colors.slice(0, 5).map((color, index) => {
+                        {colors.slice(0, 5).map((color, index) => {
                           return (
                             <div
                               className="color_bar"
@@ -297,8 +302,7 @@ export const Cassette = (props) => {
                               key={"color_bar_" + index}
                             ></div>
                           );
-                        })
-                      }
+                        })}
                       </>
                     )}
                   </div>
@@ -340,7 +344,8 @@ export const Cassette = (props) => {
                   </div>
                 </div>
               </div>
-              <div className="bk face"
+              <div
+                className="bk face"
                 style={{
                   display: props.isPosing ? "none" : "",
                 }}
@@ -380,12 +385,16 @@ export const Cassette = (props) => {
               <div className="bm face"></div>
             </div>
 
-            <div style={{display: props.isPosing ? "none" : "flex"}} className="reel-scene" id="reel-scene1">
+            <div
+              style={{ display: props.isPosing ? "none" : "flex" }}
+              className="reel-scene"
+              id="reel-scene1"
+            >
               <div
                 className="reel-shape cylinder-2 cyl-2"
                 style={{
                   animation:
-                    (isPlaying || hover) && (!props.isPosing)
+                    (isPlaying || hover) && !props.isPosing
                       ? `spin ${reel_speed ? reel_speed : 2}s linear infinite`
                       : "unset",
                   backgroundColor: song.bg_color,
@@ -421,12 +430,16 @@ export const Cassette = (props) => {
                 <div className="reel-face side s19"></div>
               </div>
             </div>
-            <div style={{display: props.isPosing ? "none" : "flex"}} className="reel-scene" id="reel-scene2">
+            <div
+              style={{ display: props.isPosing ? "none" : "flex" }}
+              className="reel-scene"
+              id="reel-scene2"
+            >
               <div
                 className="reel-shape cylinder-2 cyl-2"
                 style={{
                   animation:
-                    (isPlaying || hover) && (!props.isPosing)
+                    (isPlaying || hover) && !props.isPosing
                       ? `spin ${reel_speed ? reel_speed : 2}s linear infinite`
                       : "unset",
                   backgroundColor: song.bg_color,
