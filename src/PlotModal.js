@@ -24,7 +24,6 @@ export const PlotModal = ({
       }, 100);
     } else {
       document.querySelector(".plotsModal").style.backdropFilter = "blur(0px)";
-      document.querySelector(".loading_overlay").style.display = "flex";
       document.querySelector(".song_info").style.display = "flex";
       document.querySelector(".player_time").style.display = "flex";
     }
