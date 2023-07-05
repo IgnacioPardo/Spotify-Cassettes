@@ -55,7 +55,17 @@ const PlotSongBubbles = (props) => {
                     
                     // domain: [0, topValue],
                     // Lowest possible value is data min audio feature value
-                    domain: [Math.min(...data.map((d) => d.audio_features[key_name] * 100)), topValue],
+                    domain: [
+                        Math.max(
+                            Math.min(...data.map((d) => d.audio_features[key_name] * 100)) - 0.1,
+                            -0.1)
+                        , 
+                        Math.min(
+                            Math.max(
+                                Math.min(...data.map((d) => d.audio_features[key_name] * 100)) + 0.1,
+                                topValue),
+                            100)
+                    ],
                 },
                 width: 700,
                 height: 500,
