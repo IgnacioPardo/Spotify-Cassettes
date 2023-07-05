@@ -398,7 +398,7 @@ function App() {
         setShowingSocial(false);
       }}
         style={{
-          display: showAnatomy ? "none" : "flex",
+          display: showAnatomy || showPlots ? "none" : "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",

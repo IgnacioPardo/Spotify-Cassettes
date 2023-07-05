@@ -355,7 +355,7 @@ body {
   top: 0;
   left: 0;
   z-index: 1000 !important;
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   flex-direction: column;
