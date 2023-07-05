@@ -1,6 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap");
 
+// Define SF Pro Font imported from /public/SF-Pro.ttf
+@font-face {
+  font-family: "SF Pro";
+  src: url("SF-Pro.ttf");
+}
+
+// Define SF Pro Display Font imported from /public/SF-Pro-Display-Regular.otf
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("SF-Pro-Display-Regular.otf");
+}
+
+$sf-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", sans-serif;
 
 $black-0: #000000;
 $black-1: #0b0b0d;
@@ -31,6 +44,7 @@ body {
   overflow: hidden;
   background-color: $blue;
   transition: 0.2s ease;
+  font-family: $sf-font !important;
 }
 
 .cassetteAnatomy{
@@ -265,7 +279,7 @@ body {
   border: none;
   outline: none;
   cursor: pointer;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+  font-family: $sf-font;
   font-size: 20px;
   z-index: 1000000000;
 }
@@ -290,7 +304,7 @@ body {
   width: calc(600px * 9 / 16);
   background-color: white;
   color: black;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+  font-family: $sf-font;
   font-size: 20px;
   font-weight: bold;
   padding: 1rem;
@@ -510,7 +524,7 @@ body {
   height: 40px;
   border-radius: 50%;
   background-color: black;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+  font-family: $sf-font;
   font-size: 14px;
   font-weight: bold;
   color: white;
