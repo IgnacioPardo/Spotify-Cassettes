@@ -53,6 +53,8 @@ function App() {
   const [showingSocial, setShowingSocial] = useState(false);
 
   var searchParams = new URLSearchParams(window.location.search);
+  var isCompact =
+    searchParams.has("display") && searchParams.get("display") === "compact";
 
   const handleScroll = (event) => {
     // Handle scroll event
@@ -75,7 +77,7 @@ function App() {
       console.log(accessToken);
       setIsLoading(true);
 
-      fetchUserData(accessToken, setUserData, handleAccessTokenError, () => { });
+      fetchUserData(accessToken, setUserData, handleAccessTokenError, () => {});
       fetchTopArtists(
         accessToken,
         setUserTopArtists,
@@ -164,15 +166,17 @@ function App() {
     } else if (controlAction === "stop") {
       setControlAction("");
       setScrollShift(-8);
-      
+
       var playingCassette = document.querySelector(".cassette.playing");
       if (playingCassette) {
-       console.log(playingCassette);
-       // Perform a click on the cassette to stop it
-       console.log(playingCassette.querySelector(".clickable-cassette-shutdown"));        
-       playingCassette.querySelector(".clickable-cassette-shutdown").click();
+        console.log(playingCassette);
+        // Perform a click on the cassette to stop it
+        console.log(
+          playingCassette.querySelector(".clickable-cassette-shutdown")
+        );
+        playingCassette.querySelector(".clickable-cassette-shutdown").click();
       }
-      
+
       audio.pause();
       audio.currentTime = 0;
       setCurrentSongTime(0);
@@ -240,7 +244,7 @@ function App() {
     }
 
     if (playPromise !== undefined) {
-      playPromise.then((_) => { }).catch((error) => { });
+      playPromise.then((_) => {}).catch((error) => {});
     }
   }, [controlAction, currentSong]);
 
@@ -299,54 +303,57 @@ function App() {
   return (
     <div
       id="App"
-    //onWheel={handleScroll}
+      //onWheel={handleScroll}
     >
-      <MenuBar
-        isSignedIn={isSignedIn}
-        setTimeRange={setTimeRange}
-        timeRange={timeRange}
-        userData={userData}
-        isLoading={isLoading}
-        displayUserData={displayUserData}
-        showPlots={showPlots}
-        setShowPlots={setShowPlots}
-        setControlAction={setControlAction}
-      />
+      {!isCompact ? (
+        <>
+          <MenuBar
+            isSignedIn={isSignedIn}
+            setTimeRange={setTimeRange}
+            timeRange={timeRange}
+            userData={userData}
+            isLoading={isLoading}
+            displayUserData={displayUserData}
+            showPlots={showPlots}
+            setShowPlots={setShowPlots}
+            setControlAction={setControlAction}
+          />
 
-      <SongInfoDisplay
-        userData={userData}
-        currentSong={currentSong}
-        currentSongTime={currentSongTime}
-        currentSongDuration={currentSongDuration}
-        controlAction={controlAction}
-        setControlAction={setControlAction}
-        setCurrentSongTime={setCurrentSongTime}
-        setCurrentSongDuration={setCurrentSongDuration}
-      />
+          <SongInfoDisplay
+            userData={userData}
+            currentSong={currentSong}
+            currentSongTime={currentSongTime}
+            currentSongDuration={currentSongDuration}
+            controlAction={controlAction}
+            setControlAction={setControlAction}
+            setCurrentSongTime={setCurrentSongTime}
+            setCurrentSongDuration={setCurrentSongDuration}
+          />
 
-      <PlotModal
-        showPlots={showPlots}
-        songs={songs}
-        plotKeyName={plotKeyName}
-        setPlotKeyName={setPlotKeyName}
-        setControlAction={setControlAction}
-     />
+          <PlotModal
+            showPlots={showPlots}
+            songs={songs}
+            plotKeyName={plotKeyName}
+            setPlotKeyName={setPlotKeyName}
+            setControlAction={setControlAction}
+          />
 
-      <CassetteAnatomy
-        song={currentSong}
-        songs={songs}
-        currentItemId={currentItemId ? currentItemId : 0}
-        username={userData?.display_name}
-        timeRange={timeRange}
-        setIsLoading={setIsLoading}
-        setShowAnatomy={setShowAnatomy}
-        showAnatomy={showAnatomy}
-      />
+          <CassetteAnatomy
+            song={currentSong}
+            songs={songs}
+            currentItemId={currentItemId ? currentItemId : 0}
+            username={userData?.display_name}
+            timeRange={timeRange}
+            setIsLoading={setIsLoading}
+            setShowAnatomy={setShowAnatomy}
+            showAnatomy={showAnatomy}
+          />
 
-      <LoadingOverlay 
-        isLoading={isLoading} 
-        showAnatomy={showAnatomy}
-      />
+          <LoadingOverlay isLoading={isLoading} showAnatomy={showAnatomy} />
+        </>
+      ) : (
+        <></>
+      )}
 
       <CassetteGallery
         songs={songs}
@@ -379,6 +386,8 @@ function App() {
       />
 
       {/* {isSignedIn ? <DownloadDataButton data={songs} /> : <></>} */}
+      {!isCompact ? (
+        <>
       <GenerateSocialMediaPostButton
         song={currentSong}
         songs={songs}
@@ -392,11 +401,13 @@ function App() {
         setShowingSocial={setShowingSocial}
       />
 
-      <button className="open_anatomy round_btn" onClick={() => {
-        setShowAnatomy(true);
-        setIsLoading(true);
-        setShowingSocial(false);
-      }}
+      <button
+        className="open_anatomy round_btn"
+        onClick={() => {
+          setShowAnatomy(true);
+          setIsLoading(true);
+          setShowingSocial(false);
+        }}
         style={{
           display: showAnatomy || showPlots ? "none" : "flex",
           flexDirection: "column",
@@ -409,6 +420,10 @@ function App() {
       >
         􀯏
       </button>
+      </>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
