@@ -52,6 +52,22 @@ function App() {
   const [showAnatomy, setShowAnatomy] = useState(true);
   const [showingSocial, setShowingSocial] = useState(false);
 
+  // The cassette visualizer is desktop-only (3D scene + hover/scroll controls);
+  // on phones/tablets we just ask the visitor to open it on a computer.
+  const MOBILE_QUERY = "(max-width: 768px), (hover: none) and (pointer: coarse)";
+  const [isMobile, setIsMobile] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia(MOBILE_QUERY).matches
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_QUERY);
+    const onChange = () => setIsMobile(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
   var searchParams = new URLSearchParams(window.location.search);
   var isCompact =
     searchParams.has("display") && searchParams.get("display") === "compact";
@@ -299,6 +315,38 @@ function App() {
       `);
     }
   };
+
+  if (isMobile) {
+    return (
+      <div
+        id="App"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100vw",
+          height: "100vh",
+          padding: "24px",
+          textAlign: "center",
+          boxSizing: "border-box",
+          backgroundColor: "#4cb8f5",
+          color: "#fff",
+        }}
+      >
+        <p
+          style={{
+            fontSize: "1.25rem",
+            lineHeight: 1.4,
+            maxWidth: "20ch",
+            fontFamily:
+              '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", sans-serif',
+          }}
+        >
+          Please open this website on your computer
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div
