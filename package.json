@@ -53,6 +53,9 @@
     ]
   },
   "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
   "devDependencies": {
     "@babel/core": "7.22.5",
     "@babel/eslint-parser": "7.22.5",
